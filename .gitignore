@@ -15,6 +15,9 @@ yarn-error.log*
 output/
 reports/
 
+# Downloaded images
+output/assets/
+
 # GitHub Pages scripts
 scripts/copy-reports.js
 scripts/update-reports-json.js

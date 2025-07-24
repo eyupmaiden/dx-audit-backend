@@ -1,0 +1,8 @@
+# Ignore HTML template files to preserve template syntax
+# src/templates/report.html
+
+# Ignore generated output
+output/
+
+# Ignore node modules
+node_modules/ 

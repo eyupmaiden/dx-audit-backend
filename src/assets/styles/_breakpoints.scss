@@ -1,0 +1,52 @@
+// Breakpoints are mobile first - they are to be used with min-width
+// To use with max-width, do (max-width: $breakpoint-small - 1px)
+$breakpoint-xs: 375px;
+$breakpoint-sm: 540px;
+$breakpoint-md: 960px;
+$breakpoint-lg: 1200px;
+
+// @mixin bp($bp) {
+//   @if ($bp==sm) {
+//     @media only screen and (max-width: calc($breakpoint-small - 1px)) {
+//       @content;
+//     }
+//   } @else if ($bp==md) {
+//     @media only screen and (min-width: $breakpoint-small) {
+//       @content;
+//     }
+//   } @else if($bp==lg) {
+//     @media only screen and (min-width: $breakpoint-medium) {
+//       @content;
+//     }
+//   } @else if($bp==xl) {
+//     @media only screen and (min-width: $breakpoint-large) {
+//       @content;
+//     }
+//   }
+// }
+
+@mixin xs {
+  @media only screen and (max-width: calc($breakpoint-xs - 1px)) {
+    @content;
+  }
+}
+@mixin sm {
+  @media only screen and (max-width: calc($breakpoint-sm - 1px)) {
+    @content;
+  }
+}
+@mixin md {
+  @media only screen and (min-width: $breakpoint-sm) {
+    @content;
+  }
+}
+@mixin lg {
+  @media only screen and (min-width: $breakpoint-md) {
+    @content;
+  }
+}
+@mixin xl {
+  @media only screen and (min-width: $breakpoint-lg) {
+    @content;
+  }
+}
