@@ -1,806 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Digital Experience Audit Report - {{CLIENT_NAME}}</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;1,400;1,600&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        /* Fade in animation for sections */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            font-weight: 400;
-            line-height: 1.2;
-            color: #2B0573;
-            background-color: #ffffff;
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #2B0573 0%, #6325F4 100%);
-            color: white;
-            padding: 3rem 2rem;
-            border-radius: 15px;
-            margin-bottom: 2rem;
-            text-align: center;
-            animation: fadeInUp 1s ease-out;
-        }
-
-        .header h1 {
-            font-size: 3rem;
-            font-weight: 400;
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-            margin-bottom: 1rem;
-            animation: slideIn 1.2s ease-out;
-        }
-
-        .header p {
-            font-size: 1.2rem;
-            font-weight: 400;
-            opacity: 0.9;
-            animation: slideIn 1.4s ease-out;
-        }
-
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-            animation: fadeInUp 1.2s ease-out;
-        }
-
-        .summary-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            text-align: center;
-            border: 2px solid #E8E4FF;
-            transition: all 0.3s ease;
-            animation: fadeInUp 1.4s ease-out;
-        }
-
-        .summary-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            border-color: #6325F4;
-            box-shadow: 0 10px 25px rgba(43, 5, 115, 0.15);
-        }
-
-        .summary-card:nth-child(1) { animation-delay: 0.2s; }
-        .summary-card:nth-child(2) { animation-delay: 0.4s; }
-        .summary-card:nth-child(3) { animation-delay: 0.6s; }
-
-        .summary-card .value {
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: #2B0573;
-            margin-bottom: 0.5rem;
-            transition: color 0.3s ease;
-        }
-
-        .summary-card:hover .value {
-            animation: pulse 0.6s ease-in-out;
-        }
-
-        .summary-card h3 {
-            color: #6325F4;
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 1rem;
-        }
-
-        .summary-card .label {
-            color: #6325F4;
-            font-size: 0.9rem;
-            font-weight: 400;
-        }
-
-        .charts-section,
-        .journey-section,
-        .eyequant-section,
-        .findings-section {
-            margin-bottom: 3rem;
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        .chart-container,
-        .journey-phase,
-        .eyequant-container,
-        .category-findings {
-            animation: fadeInUp 0.6s ease-out;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .chart-container:hover,
-        .eyequant-container:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(43, 5, 115, 0.1);
-        }
-
-        .journey-phase {
-            transition: all 0.3s ease;
-        }
-
-        .journey-phase:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(43, 5, 115, 0.1);
-        }
-
-        .screenshot {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .screenshot:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 15px rgba(43, 5, 115, 0.2);
-        }
-
-        .eyequant-image {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .eyequant-image:hover {
-            transform: scale(1.02);
-            box-shadow: 0 12px 25px rgba(43, 5, 115, 0.15);
-        }
-
-        .feedback-box {
-            transition: all 0.3s ease;
-        }
-
-        .feedback-box:hover {
-            transform: translateX(5px);
-            background: #F0F2FF;
-        }
-
-        .category-findings:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(43, 5, 115, 0.08);
-        }
-
-        .section-title {
-            animation: slideIn 0.8s ease-out;
-        }
-
-        /* Staggered animations for journey phases */
-        .journey-phase:nth-child(1) { animation-delay: 0.1s; }
-        .journey-phase:nth-child(2) { animation-delay: 0.2s; }
-        .journey-phase:nth-child(3) { animation-delay: 0.3s; }
-
-        /* Smooth loading states */
-        .chart-wrapper {
-            opacity: 0;
-            animation: fadeIn 1s ease-out 0.5s forwards;
-        }
-
-        .journey-section {
-            margin-bottom: 3rem;
-        }
-
-        .eyequant-section {
-            margin-bottom: 3rem;
-        }
-
-        .eyequant-container {
-            background: white;
-            border: 2px solid #E8E4FF;
-            border-radius: 12px;
-            padding: 2rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            align-items: start;
-            min-height: 500px;
-        }
-
-        .eyequant-screenshot {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .eyequant-image {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            border: 1px solid #E8E4FF;
-            box-shadow: 0 4px 12px rgba(43, 5, 115, 0.1);
-        }
-
-        .eyequant-feedback {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            height: 100%;
-        }
-
-        .feedback-box {
-            background: #F8F9FF;
-            border: 1px solid #E8E4FF;
-            border-radius: 8px;
-            padding: 1.5rem;
-            border-left: 4px solid #6325F4;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .feedback-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2B0573;
-            margin-bottom: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .feedback-text {
-            color: #6325F4;
-            line-height: 1.4;
-            font-size: 0.95rem;
-        }
-
-        @media (max-width: 768px) {
-            .eyequant-container {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-        }
-
-        .journey-subtitle {
-            text-align: center;
-            color: #6325F4;
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            font-style: italic;
-        }
-
-        .journey-phases {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .journey-phase {
-            background: white;
-            border: 2px solid #E8E4FF;
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-        }
-
-        .phase-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #2B0573;
-            margin-bottom: 1rem;
-            text-transform: capitalize;
-        }
-
-        .phase-screenshots {
-            margin-bottom: 1.5rem;
-        }
-
-        .screenshot-container {
-            display: flex;
-            justify-content: space-around;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .screenshot {
-            flex: 1;
-            max-width: 150px;
-            border-radius: 8px;
-            border: 1px solid #E8E4FF;
-            box-shadow: 0 2px 8px rgba(43, 5, 115, 0.1);
-        }
-
-        .phase-content {
-            background: #F8F9FF;
-            padding: 1rem;
-            border-radius: 8px;
-            border-left: 4px solid #6325F4;
-        }
-
-        .phase-issue {
-            margin-bottom: 0.8rem;
-        }
-
-        .phase-hypothesis {
-            margin-bottom: 0;
-        }
-
-        .phase-label {
-            font-weight: 600;
-            color: #2B0573;
-            display: block;
-            margin-bottom: 0.3rem;
-        }
-
-        .phase-text {
-            color: #6325F4;
-            line-height: 1.3;
-        }
-
-        .chart-container {
-            background: white;
-            padding: 3rem 2rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            border: 2px solid #E8E4FF;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .chart-wrapper {
-            position: relative;
-            height: 400px;
-            margin-top: 1rem;
-        }
-
-        .radar-wrapper {
-            height: 600px;
-            width: 600px;
-            max-width: 100%;
-        }
-
-        .section-title {
-            font-size: 2rem;
-            font-weight: 400;
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-            color: #2B0573;
-            margin-bottom: 2rem;
-            text-align: center;
-            position: relative;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(135deg, #2B0573 0%, #6325F4 100%);
-            border-radius: 2px;
-        }
-
-        .findings-section {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            border: 2px solid #E8E4FF;
-        }
-
-        .client-findings {
-            margin-bottom: 3rem;
-        }
-
-        .client-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #2B0573;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #E8E4FF;
-        }
-
-        .findings-subsection {
-            margin-bottom: 2.5rem;
-        }
-
-        .subsection-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .subsection-title.needs-work {
-            background: linear-gradient(135deg, #E60834 0%, #FDE4E1 100%);
-            color: #2B0573;
-        }
-
-        .subsection-title.doing-well {
-            background: linear-gradient(135deg, #00A3B8 0%, #DAF2EE 100%);
-            color: #2B0573;
-        }
-
-        .category-findings {
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: #ffffff;
-            border-radius: 8px;
-            border: 1px solid #E8E4FF;
-        }
-
-        .needs-work-item {
-            border-left: 4px solid #E60834;
-        }
-
-        .doing-well-item {
-            border-left: 4px solid #00A3B8;
-        }
-
-        .category-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .category-name {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #2B0573;
-        }
-
-        .category-score {
-            background: linear-gradient(135deg, #2B0573 0%, #6325F4 100%);
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-weight: 600;
-            margin-left: auto;
-        }
-
-        .finding-item {
-            margin-bottom: 1rem;
-        }
-
-        .finding-label {
-            font-weight: 600;
-            color: #2B0573;
-            margin-bottom: 0.3rem;
-        }
-
-        .finding-text {
-            color: #6325F4;
-            padding-left: 1rem;
-            border-left: 2px solid #E8E4FF;
-            line-height: 1.2;
-        }
-
-        .score-indicator {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .score-indicator:hover {
-            transform: scale(1.5);
-            box-shadow: 0 0 10px rgba(43, 5, 115, 0.3);
-        }
-
-        .score-1, .score-2 { 
-            background-color: #E60834;
-        }
-        .score-1:hover, .score-2:hover {
-            box-shadow: 0 0 15px rgba(230, 8, 52, 0.5);
-        }
-
-        .score-3 { 
-            background-color: #FFFF00;
-        }
-        .score-3:hover {
-            box-shadow: 0 0 15px rgba(255, 255, 0, 0.7);
-        }
-
-        .score-4, .score-5 { 
-            background-color: #00A3B8;
-        }
-        .score-4:hover, .score-5:hover {
-            box-shadow: 0 0 15px rgba(0, 163, 184, 0.5);
-        }
-
-        .cta-section {
-            margin: 4rem 0 3rem 0;
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        .cta-container {
-            background: linear-gradient(135deg, #2B0573 0%, #6325F4 100%);
-            color: white;
-            padding: 3rem 2rem;
-            border-radius: 15px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            pointer-events: none;
-        }
-
-        .cta-title {
-            font-size: 2.2rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .cta-subtitle {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            position: relative;
-            z-index: 1;
-        }
-
-        .cta-benefits {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .benefit-item {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 1rem;
-            border-radius: 8px;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-
-        .benefit-item:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .benefit-text {
-            font-weight: 500;
-        }
-
-        .cta-button {
-            display: inline-block;
-            background: #FFFF00;
-            color: #2B0573;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 1;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 15px rgba(255, 255, 0, 0.3);
-        }
-
-        .cta-button:hover {
-            background: #FFFF33;
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(255, 255, 0, 0.4);
-        }
-
-        .cta-contact {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            position: relative;
-            z-index: 1;
-        }
-
-        .email-link {
-            color: #FFFF00;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .email-link:hover {
-            color: #FFFF33;
-            text-decoration: underline;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding: 2rem;
-            color: #6325F4;
-            border-top: 1px solid #E8E4FF;
-            font-weight: 400;
-        }
-
-        @media print {
-            body {
-                background-color: white;
-            }
-            
-            .container {
-                max-width: none;
-                padding: 1rem;
-            }
-            
-            .summary-card,
-            .chart-container,
-            .findings-section {
-                border: 1px solid #E8E4FF;
-            }
-            
-            .chart-wrapper {
-                height: 300px;
-            }
-            
-            .radar-wrapper {
-                height: 400px;
-                width: 400px;
-            }
-        }
-    </style>
-</head>
-<body>
+    <link rel="stylesheet" href="assets/styles/report.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="container full header">
+      <div class="container">
+        <h1>Digital Experience Audit Report</h1>
+        <p>Comprehensive analysis for {{CLIENT_NAME}}</p>
+        <p>Generated on {{REPORT_DATE}}</p>
+      </div>
+    </header>
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>Digital Experience Audit Report</h1>
-            <p>Comprehensive analysis for {{CLIENT_NAME}}</p>
-            <p>Generated on {{REPORT_DATE}}</p>
+      <!-- Summary Cards -->
+      <div class="summary-grid">
+        <div class="summary-card">
+          <h3>Overall Score</h3>
+          <div class="value">{{OVERALL_AVERAGE}}</div>
+          <div class="label">out of 5</div>
         </div>
-
-        <!-- Summary Cards -->
-        <div class="summary-grid">
-            <div class="summary-card">
-                <h3>Overall Score</h3>
-                <div class="value">{{OVERALL_AVERAGE}}</div>
-                <div class="label">out of 5</div>
-            </div>
-            <div class="summary-card">
-                <h3>Highest Performing</h3>
-                <div class="value">{{HIGHEST_CATEGORY_SCORE}}</div>
-                <div class="label">{{HIGHEST_CATEGORY_NAME}}</div>
-            </div>
-            <div class="summary-card">
-                <h3>Needs Attention</h3>
-                <div class="value">{{LOWEST_CATEGORY_SCORE}}</div>
-                <div class="label">{{LOWEST_CATEGORY_NAME}}</div>
-            </div>
+        <div class="summary-card">
+          <h3>Highest Performing</h3>
+          <div class="value">{{HIGHEST_CATEGORY_SCORE}}</div>
+          <div class="label">{{HIGHEST_CATEGORY_NAME}}</div>
         </div>
-
-        <!-- User Journey Section -->
-        <div class="journey-section">
-            <h2 class="section-title">Main User Journey</h2>
-            <p class="journey-subtitle">We have highlighted the top usability opportunities within the main user journey, from discovery to conversion</p>
-            
-            <div class="journey-phases">
-                {{USER_JOURNEY_CONTENT}}
-            </div>
+        <div class="summary-card">
+          <h3>Needs Attention</h3>
+          <div class="value">{{LOWEST_CATEGORY_SCORE}}</div>
+          <div class="label">{{LOWEST_CATEGORY_NAME}}</div>
         </div>
+      </div>
 
-        <!-- Eyequant Section -->
-        <div class="eyequant-section">
-            <h2 class="section-title">Visual Attention Analysis</h2>
-            <p class="journey-subtitle">This is a critical moment for the user to make a decision. We have highlighted the top visual attention opportunities at the most crucial moment of the user journey.</p>
-            {{EYEQUANT_CONTENT}}
+      <!-- User Journey Section -->
+      <div class="journey-section">
+        <h2 class="section-title">Main User Journey</h2>
+        <p class="journey-subtitle">
+          We have highlighted the top usability opportunities within the main user journey, from discovery to conversion
+        </p>
+
+        <div class="journey-phases">{{USER_JOURNEY_CONTENT}}</div>
+      </div>
+
+      <!-- Eyequant Section -->
+      <div class="eyequant-section">
+        <h2 class="section-title">Visual Attention Analysis</h2>
+        <p class="journey-subtitle">
+          This is a critical moment for the user to make a decision. We have highlighted the top visual attention
+          opportunities at the most crucial moment of the user journey.
+        </p>
+        {{EYEQUANT_CONTENT}}
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-section">
+        <h2 class="section-title">Performance Overview</h2>
+
+        <div class="chart-container">
+          <div class="chart-wrapper radar-wrapper">
+            <canvas id="radarChart"></canvas>
+          </div>
         </div>
+      </div>
 
-        <!-- Charts Section -->
-        <div class="charts-section">
-            <h2 class="section-title">Performance Overview</h2>
-            
-            <div class="chart-container">
-                <div class="chart-wrapper radar-wrapper">
-                    <canvas id="radarChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Detailed Findings -->
-        <div class="findings-section">
-            <h2 class="section-title">Detailed Findings & Recommendations</h2>
-            {{DETAILED_FINDINGS}}
-        </div>
-
-        <!-- CRO Services CTA -->
-        <div class="cta-section">
-            <div class="cta-container">
-                <h2 class="cta-title">Ready to turn these insights into results?</h2>
-                <p class="cta-subtitle">Our CRO experts are ready to implement and test these recommendations to drive measurable improvements to your conversion rates.</p>
-                
-                <div class="cta-benefits">
-                    <div class="benefit-item">
-                        <span class="benefit-text">Data-driven experiment design</span>
-                    </div>
-                    <div class="benefit-item">
-                        <span class="benefit-text">Expert implementation & testing</span>
-                    </div>
-                    <div class="benefit-item">
-                        <span class="benefit-text">Ongoing optimisation & insights</span>
-                    </div>
-                </div>
-
-                <a href="mailto:jon.crowder@journeyfurther.com?subject=CRO Services Enquiry - {{CLIENT_NAME}}&body=Hi Jon,%0D%0A%0D%0AI've reviewed the UX audit report for {{CLIENT_NAME}} and I'm interested in discussing your retained CRO services.%0D%0A%0D%0ACould we schedule a call to discuss how Journey Further can help implement these recommendations and drive measurable improvements?%0D%0A%0D%0AThanks!" 
-                   class="cta-button">
-                    Get Started with CRO Services
-                </a>
-                
-                <p class="cta-contact">Or email directly: <a href="mailto:jon.crowder@journeyfurther.com" class="email-link">jon.crowder@journeyfurther.com</a></p>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="footer">
-            <p>This report was generated automatically from audit data</p>
-        </div>
+      <!-- Detailed Findings -->
+      <div class="findings-section">
+        <h2 class="section-title">Detailed Findings & Recommendations</h2>
+        <div class="section-border">{{DETAILED_FINDINGS}}</div>
+      </div>
     </div>
 
-    <script>
-        // Chart.js configuration and data will be injected here
-        {{CHART_SCRIPTS}}
-    </script>
-</body>
+    <div class="container full cta-section">
+      <div class="container">
+        <!-- CRO Services CTA -->
+        <h2 class="cta-title">Ready to turn these insights into results?</h2>
+        <p class="cta-subtitle">
+          Our CRO experts are ready to implement and test these recommendations to drive measurable improvements to your
+          conversion rates.
+        </p>
+
+        <div class="cta-benefits">
+          <div class="benefit-item">
+            <span class="benefit-text">Data-driven experiment design</span>
+          </div>
+          <div class="benefit-item">
+            <span class="benefit-text">Expert implementation & testing</span>
+          </div>
+          <div class="benefit-item">
+            <span class="benefit-text">Ongoing optimisation & insights</span>
+          </div>
+        </div>
+
+        <a
+          href="mailto:jon.crowder@journeyfurther.com?subject=CRO Services Enquiry - {{CLIENT_NAME}}&body=Hi Jon,%0D%0A%0D%0AI've reviewed the UX audit report for {{CLIENT_NAME}} and I'm interested in discussing your retained CRO services.%0D%0A%0D%0ACould we schedule a call to discuss how Journey Further can help implement these recommendations and drive measurable improvements?%0D%0A%0D%0AThanks!"
+          class="cta-button">
+          Get Started with CRO Services
+        </a>
+
+        <p class="cta-contact">
+          Or email directly:
+          <a href="mailto:jon.crowder@journeyfurther.com" class="email-link">jon.crowder@journeyfurther.com</a>
+        </p>
+      </div>
+    </div>
+
+    <footer>
+      <div class="container">
+        <img src="./assets/img/jf-logo.png" alt="Journey Further Logo" />
+        <div class="social-links">
+          <a href="https://www.linkedin.com/company/17912315" target="_blank" rel="noopener">
+            <svg
+              version="1.0"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 448 512"
+              aria-labelledby="linkedin-in1"
+              role="img">
+              <title id="linkedin-in1">Follow us on LinkedIn</title>
+              <g id="linkedin-in1_layer">
+                <path
+                  d="M100.3 480H7.4V180.9h92.9V480zM53.8 140.1C24.1 140.1 0 115.5 0 85.8 0 56.1 24.1 32 53.8 32c29.7 0 53.8 24.1 53.8 53.8 0 29.7-24.1 54.3-53.8 54.3zM448 480h-92.7V334.4c0-34.7-.7-79.2-48.3-79.2-48.3 0-55.7 37.7-55.7 76.7V480h-92.8V180.9h89.1v40.8h1.3c12.4-23.5 42.7-48.3 87.9-48.3 94 0 111.3 61.9 111.3 142.3V480z"></path>
+              </g>
+            </svg>
+          </a>
+          <a href="https://x.com/JourneyFurther" target="_blank" rel="noopener">
+            <svg
+              version="1.0"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 512 512"
+              aria-labelledby="X Twitter2"
+              role="img">
+              <title id="X Twitter2">X Twitter icon</title>
+              <g id="X Twitter2_layer">
+                <path
+                  d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"></path>
+              </g>
+            </svg>
+          </a>
+          <a href="https://www.instagram.com/wearejourneyfurther/?hl=en-gb" target="_blank" rel="noopener">
+            <svg
+              version="1.0"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 448 512"
+              aria-labelledby="instagram3"
+              role="img">
+              <title id="instagram3">instagram icon</title>
+              <g id="instagram3_layer">
+                <path
+                  d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"></path>
+              </g>
+            </svg>
+          </a>
+          <!-- <a href="" target="_blank" rel="noopener"></a> -->
+        </div>
+        <span>Copyright © 2025, Journey Further</span>
+      </div>
+    </footer>
+
+    {{CHART_SCRIPTS}}
+  </body>
 </html>

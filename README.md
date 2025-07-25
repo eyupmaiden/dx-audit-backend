@@ -9,12 +9,14 @@ A Node.js application that generates comprehensive digital experience audit repo
 - 🎯 User journey analysis with visual attention insights
 - 📋 Detailed findings and recommendations
 - 🎨 Modern, responsive design
+- 🔧 Development mode with live reload
+- 🚀 API-ready for single record generation
 
 ## Setup
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js (v20 or higher)
 - npm or yarn
 - Airtable account with API access
 
@@ -41,6 +43,7 @@ cp .env.example .env
 AIRTABLE_API_KEY=your_airtable_api_key_here
 AIRTABLE_BASE_ID=your_base_id_here
 AIRTABLE_TABLE_NAME=your_table_name_here
+OUTPUT_FOLDER=/path/to/output/directory  # Optional, defaults to ./output
 ```
 
 ### Getting Airtable Credentials
@@ -51,12 +54,57 @@ AIRTABLE_TABLE_NAME=your_table_name_here
 
 ## Usage
 
-Generate audit reports:
+### Generate All Reports
 ```bash
-npm start
+# Generate reports for all records
+npm run build:all
+# or
+node index.js --all
 ```
 
-Reports will be generated in the `output/` directory.
+### Generate Single Report
+```bash
+# Generate report for a specific record ID
+npm run build:single -- --recordId=recXXXXXXXXXXXXXX
+# or
+node index.js --recordId=recXXXXXXXXXXXXXX
+```
+
+### Development Mode
+```bash
+# Start development server with live reload (requires recordId)
+npm run dev -- --recordId=recXXXXXXXXXXXXXX
+
+# Or set DEV_RECORD in your .env file and run:
+npm run dev
+```
+
+**Note**: Dev mode requires a recordId for single record development. You can either:
+- Pass `--recordId=recXXXXXXXXXXXXXX` to the command
+- Set `DEV_RECORD=recXXXXXXXXXXXXXX` in your `.env` file
+
+Reports will be generated in the `output/` directory (or `OUTPUT_FOLDER` if specified).
+
+## Command Line Options
+
+| Option | Description | Example |
+|--------|-------------|---------|
+| `--all` | Generate reports for all records | `node index.js --all` |
+| `--recordId=<id>` | Generate report for specific record | `node index.js --recordId=recXXXXXXXXXXXXXX` |
+
+**Note**: When using `--recordId`, the system validates that the record exists in Airtable before proceeding.
+
+## Environment Variables
+
+| Variable | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `AIRTABLE_API_KEY` | Your Airtable API key | Yes | - |
+| `AIRTABLE_BASE_ID` | Your Airtable base ID | Yes | - |
+| `AIRTABLE_TABLE_NAME` | Your Airtable table name | Yes | - |
+| `OUTPUT_FOLDER` | Output directory for reports | No | `./output` |
+| `NODE_ENV` | Environment mode | No | `production` |
+| `DEV` | Development mode flag | No | `false` |
+| `DEV_RECORD` | Default recordId for dev mode | No | - |
 
 ## Project Structure
 
@@ -75,13 +123,18 @@ dx-audit/
 └── index.js                # Main entry point
 ```
 
-## Environment Variables
+## Development Mode
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `AIRTABLE_API_KEY` | Your Airtable API key | Yes |
-| `AIRTABLE_BASE_ID` | Your Airtable base ID | Yes |
-| `AIRTABLE_TABLE_NAME` | Your Airtable table name | Yes |
+Development mode provides:
+- Live reload on file changes
+- Local development server
+- Cached data for faster iteration
+- File watching for templates and styles
+
+Start with:
+```bash
+npm run dev
+```
 
 ## Security
 

@@ -1,11 +1,17 @@
 {
   "name": "dx-audit",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "generate": "node index.js",
+    "clean": "rm -rf ./output",
+    "build": "node index.js",
+    "build:all": "node index.js --all",
+    "build:single": "node index.js --recordId=",
+    "dev": "NODE_ENV=development node index.js",
+    "dev:single": "NODE_ENV=development node index.js --recordId=",
+    "test-images": "node test-image-download.js",
+    "image-config": "node scripts/update-image-config.js",
     "copy-reports": "node scripts/copy-reports.js",
     "update-reports-json": "node scripts/update-reports-json.js",
     "publish": "npm run generate && npm run update-reports-json && npm run copy-reports"
@@ -15,7 +21,17 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "airtable": "^0.12.2",
     "axios": "^1.11.0",
-    "dotenv": "^17.2.0"
+    "dotenv": "^17.2.0",
+    "sharp": "^0.33.2"
+  },
+  "devDependencies": {
+    "sass": "^1.89.2",
+    "chokidar": "^3.5.3",
+    "ws": "^8.16.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
