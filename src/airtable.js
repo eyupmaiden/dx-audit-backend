@@ -55,6 +55,17 @@ class AirtableClient {
     }
   }
 
+  async getRecordById(recordId) {
+    try {
+      const record = await this.table.find(recordId);
+      console.log(`Successfully fetched record ${recordId} from Airtable`);
+      return record;
+    } catch (error) {
+      console.error("Error fetching record from Airtable:", error.message);
+      throw error;
+    }
+  }
+
   // Helper method to get just the field data without Airtable metadata
   extractFieldData(records) {
     return records.map((record) => ({

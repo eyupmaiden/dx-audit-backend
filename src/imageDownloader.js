@@ -153,7 +153,7 @@ class ImageDownloader {
     let totalOptimizedSize = 0;
 
     for (const record of records) {
-      const client = record.fields?.Client || record.Client || "Unknown";
+      const client = (record.fields?.Client || record.Client || "Unknown").trim();
       const recordId = record.id;
 
       // Process each field that might contain images
@@ -221,7 +221,7 @@ class ImageDownloader {
   updateRecordWithLocalImages(records, downloadedImages) {
     return records.map((record) => {
       const updatedFields = { ...record.fields };
-      const client = record.fields?.Client || record.Client || "Unknown";
+      const client = (record.fields?.Client || record.Client || "Unknown").trim();
 
       // Group downloaded images by field and record
       const imagesByField = {};

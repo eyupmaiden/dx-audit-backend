@@ -3,20 +3,318 @@ import AirtableClient from "./src/airtable.js";
 import DataProcessor from "./src/dataProcessor.js";
 import ReportGenerator from "./src/reportGenerator.js";
 import ImageDownloader from "./src/imageDownloader.js";
-import copyAssets from "./scripts/copy-assets.js";
 import { promises as fs } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import * as sass from "sass";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Parse command line arguments first (before any other processing)
+const args = process.argv.slice(2);
+let recordId = args.find((arg) => arg.startsWith("--recordId="))?.split("=")[1];
+const generateAll = args.includes("--all");
+
+// Validate command line arguments immediately
+if (args.includes("--recordId=") && !recordId) {
+  console.error("❌ Error: No recordId provided");
+  console.error("   Usage: node index.js --recordId=recXXXXXXXXXXXXXX");
+  process.exit(1);
+}
+
+// Validate recordId exists in Airtable if provided
+async function validateRecordId(recordId) {
+  if (!recordId) return;
+
+  try {
+    console.log("🔍 Validating recordId in Airtable...");
+    const airtable = new AirtableClient();
+    const record = await airtable.getRecordById(recordId);
+
+    if (!record) {
+      console.error(`❌ Error: Record with ID '${recordId}' not found in Airtable`);
+      console.error("   Please check the recordId and try again");
+      process.exit(1);
+    }
+
+    // Check if the record has data
+    const cleanData = airtable.extractFieldData([record]);
+    if (!cleanData || cleanData.length === 0 || Object.keys(cleanData[0]).length <= 1) {
+      console.error(`❌ Error: Record with ID '${recordId}' has no data`);
+      console.error("   Please check the record and try again");
+      process.exit(1);
+    }
+
+    console.log(`✅ RecordId '${recordId}' validated successfully with data`);
+  } catch (error) {
+    console.error("❌ Error validating recordId:", error.message);
+    console.error("   Please check your Airtable configuration and try again");
+    process.exit(1);
+  }
+}
+
+// Main execution function
+async function main() {
+  // Continue with normal execution
+  if (isDevMode) {
+    // Dev mode logic will be handled below - just return
+    // The actual dev mode execution happens in the dev mode section
+    return;
+  } else {
+    // Production mode - just generate once
+    await generateAuditReports();
+  }
+}
+
 // Check if we're in dev mode
 const isDevMode = process.env.NODE_ENV === "development" || process.env.DEV === "true";
 
-async function generateAuditReports() {
+// For dev mode, require a recordId (either from command line or environment)
+if (isDevMode) {
+  const devRecordId = recordId || process.env.DEV_RECORD;
+  if (!devRecordId) {
+    console.error("❌ Dev mode requires a recordId");
+    console.error("   Usage: npm run dev -- --recordId=recXXXXXXXXXXXXXX");
+    console.error("   Or set DEV_RECORD in your .env file");
+    process.exit(1);
+  }
+
+  // Use the dev recordId for validation and processing
+  if (!recordId) {
+    recordId = devRecordId;
+    console.log(`🎯 Using default recordId from .env: ${recordId}`);
+  }
+}
+
+// Validate recordId immediately if provided (before any other processing)
+if (recordId) {
+  console.log("🚀 Starting validation...");
   try {
-    console.log("🚀 Starting audit report generation...");
+    await validateRecordId(recordId);
+    console.log("✅ Validation complete, proceeding with report generation...");
+  } catch (error) {
+    console.error("❌ Validation failed:", error.message);
+    process.exit(1);
+  }
+}
+
+// Get output directory from environment or default to local output folder
+const getOutputDir = () => {
+  if (isDevMode) {
+    return path.join(__dirname, "output");
+  }
+  return process.env.OUTPUT_FOLDER || path.join(__dirname, "output");
+};
+
+// CSS compilation function
+async function compileCSS() {
+  try {
+    console.log("🔄 Compiling SCSS to CSS...");
+
+    // Compile SCSS to CSS
+    const result = sass.compile(path.join(__dirname, "src/assets/styles/report.scss"), {
+      style: "compressed", // Minify the output
+      loadPaths: [path.join(__dirname, "src/assets/styles")],
+    });
+
+    // Write the compiled CSS to a temporary location
+    const tempDir = path.join(__dirname, "temp");
+    await fs.mkdir(tempDir, { recursive: true });
+    const tempPath = path.join(tempDir, "report.css");
+    await fs.writeFile(tempPath, result.css, "utf8");
+
+    console.log(`✅ CSS compiled successfully: ${tempPath}`);
+    console.log(`📊 CSS size: ${(result.css.length / 1024).toFixed(2)} KB`);
+
+    return result.css;
+  } catch (error) {
+    console.error("❌ Error compiling CSS:", error);
+    throw error;
+  }
+}
+
+// Asset copying function
+async function copyAssets() {
+  try {
+    console.log("📁 Copying static assets...");
+
+    const srcDir = path.join(__dirname, "src");
+    const outputDir = getOutputDir();
+
+    // Ensure output directory exists
+    await fs.mkdir(outputDir, { recursive: true });
+
+    // Copy assets to each client folder
+    await copyAssetsToClientFolders(outputDir, srcDir);
+  } catch (error) {
+    console.error("❌ Error copying assets:", error);
+    throw error;
+  }
+}
+
+async function copyAssetsToClientFolders(outputDir, srcDir) {
+  try {
+    // Get all client folders
+    const items = await fs.readdir(outputDir);
+    const clientFolders = [];
+
+    for (const item of items) {
+      const itemPath = path.join(outputDir, item);
+      const stat = await fs.stat(itemPath);
+      if (stat.isDirectory() && item !== "assets") {
+        clientFolders.push(item);
+      }
+    }
+
+    if (clientFolders.length === 0) {
+      console.log("ℹ️  No client folders found, skipping client-specific asset copying");
+      return;
+    }
+
+    console.log(`📁 Copying assets to ${clientFolders.length} client folder(s)...`);
+
+    for (const clientFolder of clientFolders) {
+      const clientDir = path.join(outputDir, clientFolder);
+
+      // Copy fonts to client folder
+      const fontsSrc = path.join(srcDir, "assets/fonts");
+      const fontsDest = path.join(clientDir, "assets/fonts");
+
+      try {
+        await fs.access(fontsSrc);
+        await copyDirectory(fontsSrc, fontsDest);
+      } catch (error) {
+        console.log(`⚠️  Could not copy fonts to ${clientFolder}`);
+      }
+
+      // Copy static images to client folder
+      const imagesSrc = path.join(srcDir, "assets/img");
+      const imagesDest = path.join(clientDir, "assets/img");
+
+      try {
+        await fs.access(imagesSrc);
+        await copyDirectory(imagesSrc, imagesDest);
+      } catch (error) {
+        console.log(`⚠️  Could not copy static images to ${clientFolder}`);
+      }
+
+      // Compile CSS directly to client folder
+      const cssDest = path.join(clientDir, "assets/styles");
+      await fs.mkdir(cssDest, { recursive: true });
+
+      try {
+        const result = sass.compile(path.join(srcDir, "assets/styles/report.scss"), {
+          style: "compressed",
+          loadPaths: [path.join(srcDir, "assets/styles")],
+        });
+
+        await fs.writeFile(path.join(cssDest, "report.css"), result.css, "utf8");
+        console.log(`✅ CSS compiled and copied to ${clientFolder}`);
+      } catch (error) {
+        console.log(`⚠️  Could not compile CSS for ${clientFolder}: ${error.message}`);
+      }
+    }
+
+    console.log("✅ Assets copied to all client folders successfully");
+  } catch (error) {
+    console.error("❌ Error copying assets to client folders:", error);
+  }
+}
+
+async function copyDirectory(src, dest) {
+  // Create destination directory
+  await fs.mkdir(dest, { recursive: true });
+
+  // Read source directory
+  const items = await fs.readdir(src);
+
+  for (const item of items) {
+    const srcPath = path.join(src, item);
+    const destPath = path.join(dest, item);
+
+    const stat = await fs.stat(srcPath);
+
+    if (stat.isDirectory()) {
+      await copyDirectory(srcPath, destPath);
+    } else {
+      await fs.copyFile(srcPath, destPath);
+    }
+  }
+}
+
+async function generateSingleReport(recordId) {
+  try {
+    console.log(`🚀 Starting single report generation for record: ${recordId}...`);
+
+    let dataWithLocalImages;
+
+    if (isDevMode) {
+      // Dev mode: try to use cached data for single record
+      const cachePath = path.join(__dirname, "output", "dev-cache.json");
+      try {
+        console.log("📋 Loading cached data for single record...");
+        const cachedData = await fs.readFile(cachePath, "utf8");
+        const allCachedData = JSON.parse(cachedData);
+
+        // Find the specific record in cached data
+        const recordData = allCachedData.find((record) => record.id === recordId);
+        if (recordData) {
+          dataWithLocalImages = [recordData];
+          console.log("✅ Using cached data for single record");
+        } else {
+          throw new Error(`Record ${recordId} not found in cached data`);
+        }
+      } catch (error) {
+        console.log("⚠️  Record not found in cache, fetching from Airtable...");
+        dataWithLocalImages = await fetchAndProcessSingleRecord(recordId);
+      }
+    } else {
+      // Production mode: fetch fresh data
+      dataWithLocalImages = await fetchAndProcessSingleRecord(recordId);
+    }
+
+    // Process the data
+    console.log("⚙️  Processing audit data...");
+    const processor = new DataProcessor(dataWithLocalImages);
+    const summaryStats = processor.getSummaryStats();
+
+    if (summaryStats.clients.length === 0) {
+      throw new Error(`No client data found for record ${recordId}`);
+    }
+
+    // Generate report for the client
+    const client = summaryStats.clients[0];
+    console.log(`📄 Generating report for client: ${client}...`);
+
+    const clientFolder = client.toLowerCase().replace(/[^a-z0-9]/g, "-");
+    const outputDir = getOutputDir();
+    const clientOutputDir = path.join(outputDir, clientFolder);
+    const outputPath = path.join(clientOutputDir, "index.html");
+
+    // Store the client folder for later use in console output
+    global.devClientFolder = clientFolder;
+
+    // Copy assets to client folder before report generation
+    console.log("\n📁 Copying assets to client folder...");
+    await copyAssets();
+
+    const reportGenerator = new ReportGenerator(processor);
+    await reportGenerator.generateReport(outputPath);
+
+    console.log(`\n✅ Report generated successfully!`);
+    console.log(`📁 Report saved to: ${outputPath}`);
+
+    return outputPath;
+  } catch (error) {
+    console.error("❌ Single report generation failed:", error.message);
+    throw error;
+  }
+}
+
+async function generateAllReports() {
+  try {
+    console.log("🚀 Starting audit report generation for all records...");
     if (isDevMode) {
       console.log("🔧 Running in DEVELOPMENT mode");
       console.log("   - Using cached data (no Airtable fetch)");
@@ -60,18 +358,15 @@ async function generateAuditReports() {
       console.log("\n📄 Generating single client report...");
       const client = summaryStats.clients[0];
       const clientFolder = client.toLowerCase().replace(/[^a-z0-9]/g, "-");
-      const outputDir = path.join(__dirname, "output", clientFolder);
-      const outputPath = path.join(outputDir, "index.html");
+      const outputDir = getOutputDir();
+      const clientOutputDir = path.join(outputDir, clientFolder);
+      const outputPath = path.join(clientOutputDir, "index.html");
 
       const reportGenerator = new ReportGenerator(processor);
-      const reportPath = await reportGenerator.generateReport(outputPath);
+      await reportGenerator.generateReport(outputPath);
 
       console.log(`\n✅ Report generated successfully!`);
       console.log(`📁 Report saved to: ${outputPath}`);
-
-      if (isDevMode) {
-        console.log(`🌐 Open http://localhost:3000/${clientFolder}/index.html to view the report`);
-      }
     } else {
       // Multiple clients - generate individual reports in client-specific folders
       console.log("\n📄 Generating individual client reports...");
@@ -89,8 +384,9 @@ async function generateAuditReports() {
 
         // Generate client folder and index.html
         const clientFolder = client.toLowerCase().replace(/[^a-z0-9]/g, "-");
-        const outputDir = path.join(__dirname, "output", clientFolder);
-        const outputPath = path.join(outputDir, "index.html");
+        const outputDir = getOutputDir();
+        const clientOutputDir = path.join(outputDir, clientFolder);
+        const outputPath = path.join(clientOutputDir, "index.html");
 
         await clientReportGenerator.generateReport(outputPath);
         console.log(`   ✅ ${client} report saved to: ${outputPath}`);
@@ -99,17 +395,57 @@ async function generateAuditReports() {
       console.log(`\n🎉 All ${summaryStats.clients.length} client reports generated successfully!`);
     }
 
+    // Copy assets to client folders before report generation
+    console.log("\n📁 Copying assets to client folders...");
+    await copyAssets();
+
     if (!isDevMode) {
       console.log(`\n🌐 Open the HTML files in your browser to view the reports`);
       console.log(`📁 Each client folder contains all necessary assets`);
     }
-
-    // Copy assets to client folders after report generation
-    console.log("\n📁 Copying assets to client folders...");
-    await copyAssets();
   } catch (error) {
     console.error("❌ Report generation failed:", error.message);
+    throw error;
   }
+}
+
+async function generateAuditReports() {
+  try {
+    if (recordId) {
+      await generateSingleReport(recordId);
+    } else if (generateAll || !isDevMode) {
+      await generateAllReports();
+    } else {
+      // This should never happen now since dev mode requires recordId
+      console.error("❌ Dev mode requires a recordId");
+      process.exit(1);
+    }
+  } catch (error) {
+    console.error("❌ Report generation failed:", error.message);
+    process.exit(1);
+  }
+}
+
+async function fetchAndProcessSingleRecord(recordId) {
+  // Fetch single record from Airtable
+  console.log("📊 Fetching record from Airtable...");
+  const airtable = new AirtableClient();
+  const record = await airtable.getRecordById(recordId);
+
+  if (!record) {
+    throw new Error(`Record with ID ${recordId} not found in Airtable`);
+  }
+
+  const cleanData = airtable.extractFieldData([record]);
+
+  // Download images for this record
+  console.log("🖼️  Downloading images...");
+  const outputDir = getOutputDir();
+  const imageDownloader = new ImageDownloader(outputDir);
+  const downloadedImages = await imageDownloader.downloadAllImages(cleanData);
+
+  // Update data with local image paths
+  return imageDownloader.updateRecordWithLocalImages(cleanData, downloadedImages);
 }
 
 async function fetchAndProcessData() {
@@ -121,7 +457,7 @@ async function fetchAndProcessData() {
 
   // Download images for each client
   console.log("🖼️  Downloading images...");
-  const outputDir = path.join(__dirname, "output");
+  const outputDir = getOutputDir();
   const imageDownloader = new ImageDownloader(outputDir);
 
   const downloadedImages = await imageDownloader.downloadAllImages(cleanData);
@@ -134,6 +470,9 @@ async function fetchAndProcessData() {
 if (isDevMode) {
   console.log("👀 Starting development server with file watching...");
 
+  // Log dev mode configuration
+  console.log(`🎯 Dev mode: Single record generation for recordId: ${recordId}`);
+
   // Import chokidar for file watching (we'll need to install it)
   let chokidar;
   try {
@@ -141,7 +480,7 @@ if (isDevMode) {
   } catch (error) {
     console.error("❌ chokidar not installed. Please run: npm install chokidar");
     console.log("💡 For now, running without file watching...");
-    generateAuditReports();
+    await generateAuditReports();
     process.exit(0);
   }
 
@@ -158,7 +497,7 @@ if (isDevMode) {
     // Default to the first client folder if no file specified
     if (filePath === "/") {
       // Find the first client folder
-      const outputDir = path.join(__dirname, "output");
+      const outputDir = getOutputDir();
       try {
         const items = fs.readdirSync(outputDir);
         const clientFolders = items.filter((item) => {
@@ -183,14 +522,14 @@ if (isDevMode) {
       if (filePath.startsWith("/") && filePath.split("/").length === 2) {
         // This is a client folder request, serve index.html
         const clientFolder = filePath.split("/")[1];
-        fullPath = path.join(__dirname, "output", clientFolder, "index.html");
+        fullPath = path.join(getOutputDir(), clientFolder, "index.html");
       } else if (filePath.endsWith("/")) {
         // Directory request, serve index.html from that directory
         const dirPath = filePath.substring(1, filePath.length - 1); // Remove leading / and trailing /
-        fullPath = path.join(__dirname, "output", dirPath, "index.html");
+        fullPath = path.join(getOutputDir(), dirPath, "index.html");
       } else {
         // Remove leading slash and resolve to output directory
-        fullPath = path.join(__dirname, "output", filePath.substring(1));
+        fullPath = path.join(getOutputDir(), filePath.substring(1));
       }
     } catch (error) {
       console.error("Error resolving file path:", error);
@@ -206,9 +545,9 @@ if (isDevMode) {
         let availableReports = "";
         try {
           availableReports = fs
-            .readdirSync(path.join(__dirname, "output"))
+            .readdirSync(getOutputDir())
             .filter((item) => {
-              const itemPath = path.join(__dirname, "output", item);
+              const itemPath = path.join(getOutputDir(), item);
               return fs.statSync(itemPath).isDirectory();
             })
             .map((folder) => `<li><a href="/${folder}/">${folder}</a></li>`)
@@ -292,7 +631,7 @@ if (isDevMode) {
   const PORT = process.env.PORT || 3000;
   server.listen(PORT, () => {
     console.log(`🌐 Development server running at http://localhost:${PORT}`);
-    console.log(`📁 Serving files from: ${path.join(__dirname, "output")}`);
+    console.log(`📁 Serving files from: ${getOutputDir()}`);
   });
 
   // WebSocket server for live reload
@@ -351,6 +690,20 @@ if (isDevMode) {
   // Initial generation
   await generateAuditReports();
 
+  // Dev mode setup complete
+  console.log("\n🎉 Development server is ready!");
+
+  // Show the specific report URL for the record being developed
+  console.log("📁 Open files:");
+  if (global.devClientFolder) {
+    console.log(`   🌐 http://localhost:3000/${global.devClientFolder}/index.html`);
+  } else {
+    console.log("   🌐 http://localhost:3000/");
+  }
+
+  console.log("\n🔄 Live reload is active - changes to templates and styles will automatically regenerate reports");
+  console.log("⏹️  Press Ctrl+C to stop the dev server");
+
   // Watch for changes
   watcher.on("change", async (filepath) => {
     console.log(`\n🔄 File changed: ${filepath}`);
@@ -359,7 +712,6 @@ if (isDevMode) {
       // If it's a SCSS file, recompile CSS first
       if (filepath.includes(".scss")) {
         console.log("🎨 Recompiling CSS...");
-        const { default: compileCSS } = await import("./scripts/compile-css.js");
         await compileCSS();
         console.log("✅ CSS recompiled successfully!");
       }

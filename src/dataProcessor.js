@@ -21,8 +21,17 @@ class DataProcessor {
         const scoreField = `${category} Score`;
         scores[category] = parseInt(record.fields?.[scoreField] || record[scoreField]) || 0;
       });
+
+      // Handle Client field as simple text field
+      let clientName = "Unknown Client";
+      const clientField = record.fields?.Client || record.Client;
+
+      if (clientField && typeof clientField === "string") {
+        clientName = clientField.trim();
+      }
+
       return {
-        client: record.fields?.Client || record.Client || "Unknown Client",
+        client: clientName,
         id: record.fields?.ID || record.ID || record.id,
         scores,
       };
@@ -115,22 +124,33 @@ class DataProcessor {
 
   // Get all issues and experiments for detailed sections
   getDetailedFindings() {
-    return this.rawData.map((record) => ({
-      client: record.fields?.Client || record.Client || "Unknown Client",
-      id: record.fields?.ID || record.ID || record.id,
-      findings: this.categories.map((category) => ({
-        category,
-        score: parseInt(record.fields?.[`${category} Score`] || record[`${category} Score`]) || 0,
-        issue:
-          record.fields?.[`${category} Issue`] ||
-          record[`${category} Issue`] ||
-          record.fields?.[`${category} Issues`] ||
-          record[`${category} Issues`] ||
-          "No issues recorded",
-        experiment:
-          record.fields?.[`${category} Experiments`] || record[`${category} Experiments`] || "No experiments suggested",
-      })),
-    }));
+    return this.rawData.map((record) => {
+      // Handle Client field as simple text field
+      let clientName = "Unknown Client";
+      const clientField = record.fields?.Client || record.Client;
+      if (clientField && typeof clientField === "string") {
+        clientName = clientField.trim();
+      }
+
+      return {
+        client: clientName,
+        id: record.fields?.ID || record.ID || record.id,
+        findings: this.categories.map((category) => ({
+          category,
+          score: parseInt(record.fields?.[`${category} Score`] || record[`${category} Score`]) || 0,
+          issue:
+            record.fields?.[`${category} Issue`] ||
+            record[`${category} Issue`] ||
+            record.fields?.[`${category} Issues`] ||
+            record[`${category} Issues`] ||
+            "No issues recorded",
+          experiment:
+            record.fields?.[`${category} Experiments`] ||
+            record[`${category} Experiments`] ||
+            "No experiments suggested",
+        })),
+      };
+    });
   }
 
   // Get summary statistics for the header cards
@@ -179,48 +199,69 @@ class DataProcessor {
 
   // Get user journey data
   getUserJourneyData() {
-    return this.rawData.map((record) => ({
-      client: record.fields?.Client || record.Client || "Unknown Client",
-      id: record.fields?.ID || record.ID || record.id,
-      phases: [
-        {
-          name: "Discovery phase",
-          screenshots: this.parseScreenshots(
-            record.fields?.["Discovery Phase Screenshots"] || record["Discovery Phase Screenshots"]
-          ),
-          comments:
-            record.fields?.["Discovery Phase Comments"] || record["Discovery Phase Comments"] || "No issues recorded",
-        },
-        {
-          name: "Decision phase",
-          screenshots: this.parseScreenshots(
-            record.fields?.["Decision Phase Screenshots"] || record["Decision Phase Screenshots"]
-          ),
-          comments:
-            record.fields?.["Decision Phase Comments"] || record["Decision Phase Comments"] || "No issues recorded",
-        },
-        {
-          name: "Conversion phase",
-          screenshots: this.parseScreenshots(
-            record.fields?.["Conversion Phase Screenshots"] || record["Conversion Phase Screenshots"]
-          ),
-          comments:
-            record.fields?.["Conversion Phase Comments"] || record["Conversion Phase Comments"] || "No issues recorded",
-        },
-      ],
-    }));
+    return this.rawData.map((record) => {
+      // Handle Client field as simple text field
+      let clientName = "Unknown Client";
+      const clientField = record.fields?.Client || record.Client;
+      if (clientField && typeof clientField === "string") {
+        clientName = clientField.trim();
+      }
+
+      return {
+        client: clientName,
+        id: record.fields?.ID || record.ID || record.id,
+        phases: [
+          {
+            name: "Discovery phase",
+            screenshots: this.parseScreenshots(
+              record.fields?.["Discovery Phase Screenshots"] || record["Discovery Phase Screenshots"]
+            ),
+            comments:
+              record.fields?.["Discovery Phase Comments"] || record["Discovery Phase Comments"] || "No issues recorded",
+          },
+          {
+            name: "Decision phase",
+            screenshots: this.parseScreenshots(
+              record.fields?.["Decision Phase Screenshots"] || record["Decision Phase Screenshots"]
+            ),
+            comments:
+              record.fields?.["Decision Phase Comments"] || record["Decision Phase Comments"] || "No issues recorded",
+          },
+          {
+            name: "Conversion phase",
+            screenshots: this.parseScreenshots(
+              record.fields?.["Conversion Phase Screenshots"] || record["Conversion Phase Screenshots"]
+            ),
+            comments:
+              record.fields?.["Conversion Phase Comments"] ||
+              record["Conversion Phase Comments"] ||
+              "No issues recorded",
+          },
+        ],
+      };
+    });
   }
 
   // Get Eyequant data
   getEyequantData() {
-    return this.rawData.map((record) => ({
-      client: record.fields?.Client || record.Client || "Unknown Client",
-      id: record.fields?.ID || record.ID || record.id,
-      screenshot:
-        this.parseScreenshots(record.fields?.["Eyequant Screenshot"] || record["Eyequant Screenshot"])[0] || null,
-      topFeedback: record.fields?.["Top Feedback"] || record["Top Feedback"] || "No top feedback provided",
-      bottomFeedback: record.fields?.["Bottom Feedback"] || record["Bottom Feedback"] || "No bottom feedback provided",
-    }));
+    return this.rawData.map((record) => {
+      // Handle Client field as simple text field
+      let clientName = "Unknown Client";
+      const clientField = record.fields?.Client || record.Client;
+      if (clientField && typeof clientField === "string") {
+        clientName = clientField.trim();
+      }
+
+      return {
+        client: clientName,
+        id: record.fields?.ID || record.ID || record.id,
+        screenshot:
+          this.parseScreenshots(record.fields?.["Eyequant Screenshot"] || record["Eyequant Screenshot"])[0] || null,
+        topFeedback: record.fields?.["Top Feedback"] || record["Top Feedback"] || "No top feedback provided",
+        bottomFeedback:
+          record.fields?.["Bottom Feedback"] || record["Bottom Feedback"] || "No bottom feedback provided",
+      };
+    });
   }
 
   // Parse screenshot field into array of screenshot objects
