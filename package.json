@@ -5,11 +5,9 @@
   "main": "index.js",
   "scripts": {
     "clean": "rm -rf ./output",
-    "build": "node index.js",
+    "build": "node index.js $1",
     "build:all": "node index.js --all",
-    "build:single": "node index.js --recordId=",
     "dev": "NODE_ENV=development node index.js",
-    "dev:single": "NODE_ENV=development node index.js --recordId=",
     "test-images": "node test-image-download.js",
     "image-config": "node scripts/update-image-config.js",
     "copy-reports": "node scripts/copy-reports.js",

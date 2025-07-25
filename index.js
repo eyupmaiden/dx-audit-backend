@@ -16,10 +16,23 @@ const args = process.argv.slice(2);
 let recordId = args.find((arg) => arg.startsWith("--recordId="))?.split("=")[1];
 const generateAll = args.includes("--all");
 
+// If no --recordId flag but we have a positional argument, use it as recordId
+if (!recordId && args.length > 0 && !args[0].startsWith("--")) {
+  recordId = args[0];
+}
+
 // Validate command line arguments immediately
 if (args.includes("--recordId=") && !recordId) {
   console.error("❌ Error: No recordId provided");
   console.error("   Usage: node index.js --recordId=recXXXXXXXXXXXXXX");
+  process.exit(1);
+}
+
+// Check if we have either --all flag or a recordId
+if (!generateAll && !recordId) {
+  console.error("❌ Error: Either --all flag or recordId is required");
+  console.error("   Usage: npm run build recXXXXXXXXXXXXXX");
+  console.error("   Or: npm run build:all");
   process.exit(1);
 }
 
