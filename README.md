@@ -16,7 +16,7 @@ A Node.js application that generates comprehensive digital experience audit repo
 
 ### Prerequisites
 
-- Node.js (v20 or higher)
+- Node.js (v18 or higher)
 - npm or yarn
 - Airtable account with API access
 
