@@ -115,7 +115,7 @@ class ReportGenerator {
       .map((finding) => {
         const scoreClass = `score-${finding.score}`;
         return `
-        <div class="category-findings ${className}-item">
+        <div class="category-findings ${className}-item ${scoreClass}">
           <div class="category-header">
             <div class="category-name">
               <span class="score-indicator ${scoreClass}"></span>

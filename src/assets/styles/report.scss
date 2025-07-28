@@ -609,6 +609,10 @@ body {
 
   &.needs-work-item {
     border-left: 4px solid $error-color;
+
+    &.score-3 {
+      border-left: 4px solid $warn-color;
+    }
   }
 
   &.doing-well-item {
