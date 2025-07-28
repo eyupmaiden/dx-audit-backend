@@ -6,6 +6,23 @@ class AirtableClient {
     this.baseId = process.env.AIRTABLE_BASE_ID;
     this.tableName = process.env.AIRTABLE_TABLE_NAME;
 
+    // Validate required environment variables
+    if (!this.apiKey) {
+      throw new Error(
+        "AIRTABLE_API_KEY environment variable is required. Please check your .env file or ensure environment variables are passed to the child process."
+      );
+    }
+    if (!this.baseId) {
+      throw new Error(
+        "AIRTABLE_BASE_ID environment variable is required. Please check your .env file or ensure environment variables are passed to the child process."
+      );
+    }
+    if (!this.tableName) {
+      throw new Error(
+        "AIRTABLE_TABLE_NAME environment variable is required. Please check your .env file or ensure environment variables are passed to the child process."
+      );
+    }
+
     // Configure Airtable with API key
     Airtable.configure({ apiKey: this.apiKey });
 
