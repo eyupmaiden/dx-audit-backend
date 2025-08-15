@@ -166,7 +166,7 @@ body {
 
   &::after {
     display: block;
-    background-image: url(../img/header-ribbon.png);
+    background-image: url("https://dx.journeyfurther.com/audit/static/header-ribbon.png");
     background-repeat: no-repeat;
     background-size: 100%;
     content: "";
@@ -718,7 +718,7 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    background: url(../img/footer-bg.jpg);
+    background: url("https://dx.journeyfurther.com/audit/static/footer-bg.jpg");
     background-size: cover;
     background-position: center;
     content: "";
