@@ -21,10 +21,25 @@
     <header class="container full header">
       <div class="container">
         <h1>Digital Experience Audit Report</h1>
-        <p>Comprehensive analysis for {{CLIENT_NAME}}</p>
-        <p>Generated on {{REPORT_DATE}}</p>
+        <p>Analysis of {{SITE}} for {{CLIENT_NAME}}</p>
+        <div class="user--details">
+          <span class="icon--{{USER_ID}}"></span>
+          <p>
+            <span class="subtext">Conducted by</span><span class="report--user">{{USER}}</span
+            ><span class="report--date">{{REPORT_DATE}}</span>
+          </p>
+        </div>
       </div>
     </header>
+    <div class="container full intro">
+      <div class="container">
+        <h2>
+          This audit provides a comprehensive analysis of a site, highlighting performance against a set of core UX
+          principles along with some potential recommendations for experimentation that could help to improve the
+          customer journey
+        </h2>
+      </div>
+    </div>
     <div class="container">
       <!-- Summary Cards -->
       <div class="summary-grid">
@@ -49,7 +64,7 @@
       <div class="journey-section">
         <h2 class="section-title">Main User Journey</h2>
         <p class="journey-subtitle">
-          We have highlighted the top usability opportunities within the main user journey, from discovery to conversion
+          We've highlighted the top usability opportunities within the main user journey, from discovery to conversion
         </p>
 
         <div class="journey-phases">{{USER_JOURNEY_CONTENT}}</div>
@@ -59,8 +74,8 @@
       <div class="eyequant-section">
         <h2 class="section-title">Visual Attention Analysis</h2>
         <p class="journey-subtitle">
-          This is a critical moment for the user to make a decision. We have highlighted the top visual attention
-          opportunities at the most crucial moment of the user journey.
+          We've highlighted a critical moment for the user to make a decision, analysising the top visual attention
+          opportunities that are present.
         </p>
         {{EYEQUANT_CONTENT}}
       </div>
@@ -68,25 +83,30 @@
       <!-- Charts Section -->
       <div class="charts-section">
         <h2 class="section-title">Performance Overview</h2>
+        <p class="journey-subtitle">
+          We've conducted an analysis of your site across several keys themes, scoring each from 1 to 5. Lower scoring
+          areas should be prioritized for further research and experimentation, with some examples provided below.
+        </p>
 
         <div class="chart-container">
           <div class="chart-wrapper radar-wrapper">
             <canvas id="radarChart"></canvas>
           </div>
         </div>
+
+        {{DETAILED_FINDINGS}}
       </div>
 
-      <!-- Detailed Findings -->
+      <!-- Detailed Findings
       <div class="findings-section">
-        <h2 class="section-title">Detailed Findings & Recommendations</h2>
         <div class="section-border">{{DETAILED_FINDINGS}}</div>
-      </div>
+      </div> -->
     </div>
 
     <div class="container full cta-section">
       <div class="container">
         <!-- CRO Services CTA -->
-        <h2 class="cta-title">Ready to turn these insights into results?</h2>
+        <h2 class="cta-title">Ready to turn these insights into <span class="squiggle-underline">results?</span></h2>
         <p class="cta-subtitle">
           Our CRO experts are ready to implement and test these recommendations to drive measurable improvements to your
           conversion rates.

@@ -72,16 +72,24 @@ node index.js --recordId=recXXXXXXXXXXXXXX
 
 ### Development Mode
 ```bash
-# Start development server with live reload (requires recordId)
-npm run dev -- --recordId=recXXXXXXXXXXXXXX
-
-# Or set DEV_RECORD in your .env file and run:
+# Start development server with live reload (uses default recordId from .env)
 npm run dev
+
+# Or specify a different recordId:
+npm run dev recXXXXXXXXXXXXXX
 ```
 
-**Note**: Dev mode requires a recordId for single record development. You can either:
-- Pass `--recordId=recXXXXXXXXXXXXXX` to the command
-- Set `DEV_RECORD=recXXXXXXXXXXXXXX` in your `.env` file
+**Note**: Dev mode requires a recordId. You can either:
+- Set `DEV_RECORD=recXXXXXXXXXXXXXX` in your `.env` file (recommended)
+- Pass the recordId as a command line argument
+
+### Development Caching
+The system automatically caches the single record you're developing with:
+
+- **First run**: Fetches data from Airtable and caches it locally
+- **Subsequent runs**: Uses cached data for faster development
+- **Cache location**: `output/dev-cache.json`
+- **Automatic**: No manual cache management needed
 
 Reports will be generated in the `output/` directory (or `OUTPUT_FOLDER` if specified).
 

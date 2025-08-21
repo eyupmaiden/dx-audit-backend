@@ -60,6 +60,12 @@ $mobile: 768px;
   }
 }
 
+@mixin mobile {
+  @media (max-width: $mobile) {
+    @content;
+  }
+}
+
 @mixin gradient-success {
   background: linear-gradient(135deg, $success-color 0%, #daf2ee 100%);
 }
@@ -122,7 +128,7 @@ body {
   margin: 0 auto;
   padding: $spacing-xl;
 
-  @media (max-width: $mobile) {
+  @include mobile {
     padding: $spacing-md;
   }
 
@@ -141,7 +147,7 @@ body {
   border-radius: $border-radius-md;
   padding: $spacing-xl;
 
-  @media (max-width: $mobile) {
+  @include mobile {
     padding: $spacing-md;
   }
 }
@@ -192,13 +198,111 @@ body {
     margin-bottom: $spacing-md;
     @include slideIn(0.2s);
     max-width: 600px;
+    text-shadow: 3px 3px 35px #2b0473;
   }
 
   p {
     font-size: 1.2rem;
     font-weight: $font-normal;
+    line-height: 1.4;
     opacity: 0.9;
     @include slideIn(0.4s);
+
+    &.uppercase {
+      text-transform: uppercase;
+
+      span {
+        padding: 0 12px;
+      }
+    }
+  }
+
+  .user--details {
+    margin-top: 32px;
+    display: flex;
+    gap: 12px;
+
+    span[class*="icon--"] {
+      width: 60px;
+      height: 60px;
+      border: 3px solid #fff;
+      border-radius: 50px;
+      background-color: #dedede;
+      display: block;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      position: relative;
+
+      @include slideIn(0.2s);
+
+      // &::before {
+      //   content: "";
+      //   display: block;
+      //   position: absolute;
+      //   left: 0;
+      //   top: 0;
+      //   transform: translate(-20px, -110%);
+      //   width: 100%;
+      //   height: 40px;
+      //   background-image: url("https://dx.journeyfurther.com/audit/static/crown-squiggle.png");
+      //   filter: brightness(0) invert(1);
+      //   background-position: center;
+      //   background-size: contain;
+      //   background-repeat: no-repeat;
+      // }
+
+      &.icon--usrGBoTuHk86BXqll {
+        background-image: url("https://dx.journeyfurther.com/audit/static/users/sam.jpg");
+      }
+      &.icon--usrdMSNYJXyWsN3vt {
+        background-image: url("https://dx.journeyfurther.com/audit/static/users/magnolia.jpg");
+      }
+      &.icon--usrijZ3MurDBxkkAo {
+        background-image: url("https://dx.journeyfurther.com/audit/static/users/lorna.jpg");
+      }
+      &.icon--usrSeJRilPysdhKIZ {
+        background-image: url("https://dx.journeyfurther.com/audit/static/users/katie.jpg");
+      }
+      &.icon--usr66d3ZNGemhcGVv {
+        background-image: url("https://dx.journeyfurther.com/audit/static/users/martyn.jpg");
+      }
+      &.icon--usrm6HcNpQik5YsUa {
+        background-image: url("https://dx.journeyfurther.com/audit/static/users/jon.jpg");
+      }
+      &.icon--usravIwKidzZoFqy8 {
+        background-image: url("https://dx.journeyfurther.com/audit/static/users/dami.jpg");
+      }
+    }
+
+    p {
+      span.subtext {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: block;
+        line-height: 1.2;
+      }
+      span.report--user {
+        display: block;
+      }
+      span.report--date {
+        display: block;
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+.container.intro {
+  background: $background-light;
+
+  @include fadeInUp(0.2s);
+
+  h2 {
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.6;
   }
 }
 
@@ -305,24 +409,6 @@ body {
   }
 }
 
-.eyequant-image {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-
-  &:hover {
-    transform: scale(1.02);
-    box-shadow: 0 12px 25px rgba($primary-color, 0.15);
-  }
-}
-
-.feedback-box {
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateX(5px);
-    background: $background-light;
-  }
-}
-
 .category-findings:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba($primary-color, 0.08);
@@ -360,57 +446,128 @@ body {
   @extend .section-border;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
   gap: $spacing-xl;
-  align-items: start;
   min-height: 500px;
-}
-
-.eyequant-screenshot {
-  display: flex;
-  justify-content: center;
   align-items: center;
-}
 
-.eyequant-image {
-  max-width: 100%;
-  height: auto;
-  border-radius: $border-radius-sm;
-  border: 1px solid $border-color;
-  box-shadow: 0 4px 12px rgba($primary-color, 0.1);
-}
+  @include mobile {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+  }
 
-.eyequant-feedback {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-lg;
-  height: 100%;
-}
+  .eyequant-screenshot {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    grid-column: 1;
+    grid-row: 1 / -1;
 
-.feedback-box {
-  background: $background-light;
-  border: 1px solid $border-color;
-  border-radius: $border-radius-sm;
-  padding: $spacing-lg;
-  border-left: 4px solid $secondary-color;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
+    @include mobile {
+      grid-row: 2 / span 2;
+    }
 
-.feedback-title {
-  font-size: 1.1rem;
-  font-weight: $font-semibold;
-  color: $color-indigo;
-  margin-bottom: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
+    .eyequant-image {
+      max-width: 100%;
+      height: auto;
+      border-radius: $border-radius-sm;
+      border: 1px solid $border-color;
+      box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+    }
+  }
 
-.feedback-text {
-  color: $color-purple;
-  line-height: 1.4;
-  font-size: 0.95rem;
+  .feedback-box {
+    background: $background-light;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-sm;
+    padding: $spacing-lg;
+    border-left: 4px solid $secondary-color;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: all 0.3s ease;
+
+    &.top {
+      grid-column: 2;
+      grid-row: 1;
+
+      @include mobile {
+        grid-column: 1;
+
+        .feedback-title {
+          order: 2;
+        }
+        .feedback-text {
+          order: 1;
+        }
+      }
+    }
+
+    &.bottom {
+      grid-column: 2;
+      grid-row: 2;
+
+      @include mobile {
+        grid-column: 1;
+        grid-row: 4;
+
+        .feedback-title {
+          order: 1;
+        }
+        .feedback-text {
+          order: 2;
+        }
+      }
+    }
+
+    &:hover {
+      transform: translateX(5px);
+      background: $background-light;
+    }
+
+    .feedback-title {
+      font-size: 1.1rem;
+      font-weight: $font-semibold;
+      color: $color-indigo;
+      margin-bottom: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background-size: contain;
+      background-repeat: no-repeat;
+
+      &.top {
+        background-image: url("https://dx.journeyfurther.com/audit/static/top-squiggle.png");
+        width: 150px;
+        height: 31px;
+        filter: brightness(0) saturate(100%) invert(15%) sepia(100%) saturate(3000%) hue-rotate(250deg);
+        transform: translateX(-100px);
+
+        @include mobile {
+          transform: rotate(-90deg) translate(-80px, -30px);
+        }
+      }
+
+      &.bottom {
+        background-image: url("https://dx.journeyfurther.com/audit/static/bottom-squiggle.png");
+        width: 150px;
+        height: 47px;
+        filter: brightness(0) saturate(100%) invert(15%) sepia(100%) saturate(3000%) hue-rotate(250deg);
+        transform: translateX(-100px);
+        margin-top: 6px;
+
+        @include mobile {
+          transform: rotate(90deg) translate(-50px, 20px);
+        }
+      }
+    }
+
+    .feedback-text {
+      color: $color-purple;
+      line-height: 1.4;
+      font-size: 0.95rem;
+    }
+  }
 }
 
 // Journey Section
@@ -506,7 +663,7 @@ body {
   justify-content: center;
   align-items: center;
 
-  @media (max-width: $mobile) {
+  @include mobile {
     padding: $spacing-md;
     overflow-x: auto;
     overflow-y: hidden;
@@ -519,7 +676,7 @@ body {
   height: 400px;
   margin-top: $spacing-md;
 
-  @media (max-width: $mobile) {
+  @include mobile {
     min-width: 600px;
     height: 350px;
   }
@@ -530,7 +687,7 @@ body {
   width: 100%;
   max-width: 900px;
 
-  @media (max-width: $mobile) {
+  @include mobile {
     min-width: 500px;
   }
 }
@@ -589,14 +746,44 @@ body {
   border-radius: $border-radius-sm;
   text-align: center;
 
+  span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    &::before {
+      content: "";
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      width: 25px;
+      height: 25px;
+      filter: brightness(0) invert(1);
+      display: inline-block;
+    }
+  }
+
   &.needs-work {
     background: $error-color;
     color: #fff;
+
+    span {
+      &::before {
+        background-image: url("https://dx.journeyfurther.com/audit/static/cross-squiggle.png");
+      }
+    }
   }
 
   &.doing-well {
     background: $success-color;
     color: #fff;
+
+    span {
+      &::before {
+        background-image: url("https://dx.journeyfurther.com/audit/static/tick-squiggle.png");
+      }
+    }
   }
 }
 
@@ -824,7 +1011,7 @@ footer {
     align-items: center;
     justify-content: space-between;
 
-    @media (max-width: $mobile) {
+    @include mobile {
       flex-direction: column;
       gap: 20px;
     }
@@ -869,7 +1056,7 @@ footer {
 }
 
 // Responsive Design
-@media (max-width: $mobile) {
+@include mobile {
   .eyequant-container {
     grid-template-columns: 1fr;
     gap: $spacing-lg;
@@ -900,5 +1087,24 @@ footer {
   .radar-wrapper {
     height: 400px;
     width: 400px;
+  }
+}
+
+.squiggle-underline {
+  position: relative;
+
+  &::after {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    transform: translateY(100%);
+    width: 100%;
+    height: 10px;
+    background-image: url("https://dx.journeyfurther.com/audit/static/underline-squiggle.png");
+    filter: brightness(0) invert(1);
+    background-position: center;
+    background-size: cover;
   }
 }

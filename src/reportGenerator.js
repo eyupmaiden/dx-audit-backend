@@ -21,6 +21,7 @@ class ReportGenerator {
       // CSS is now always external via link tag in template
 
       // Get processed data
+      const reportDetails = this.dataProcessor.getReportDetails();
       const summaryStats = this.dataProcessor.getSummaryStats();
       const detailedFindings = this.dataProcessor.getDetailedFindings();
       const radarData = this.dataProcessor.getRadarChartData();
@@ -29,7 +30,14 @@ class ReportGenerator {
       const eyequantData = this.dataProcessor.getEyequantData();
 
       // Replace template placeholders
-      htmlTemplate = this.replacePlaceholders(htmlTemplate, summaryStats, detailedFindings, journeyData, eyequantData);
+      htmlTemplate = this.replacePlaceholders(
+        htmlTemplate,
+        reportDetails,
+        summaryStats,
+        detailedFindings,
+        journeyData,
+        eyequantData
+      );
 
       // Generate chart scripts
       const chartScripts = this.generateChartScripts(radarData, barData);
@@ -50,16 +58,20 @@ class ReportGenerator {
     }
   }
 
-  replacePlaceholders(template, summaryStats, detailedFindings, journeyData, eyequantData) {
+  replacePlaceholders(template, reportDetails, summaryStats, detailedFindings, journeyData, eyequantData) {
     const { clients, overallAverage, highestCategory, lowestCategory, totalAudits } = summaryStats;
+    const { user, userId, site, reportDate } = reportDetails;
     const clientName = clients.join(", ");
-    const reportDate = new Date().toLocaleDateString("en-GB", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    // const reportDate = new Date().toLocaleDateString("en-GB", {
+    //   year: "numeric",
+    //   month: "long",
+    //   day: "numeric",
+    // });
 
     const replacements = {
+      "{{USER}}": user,
+      "{{USER_ID}}": userId,
+      "{{SITE}}": site,
       "{{CLIENT_NAME}}": clientName,
       "{{REPORT_DATE}}": reportDate,
       "{{OVERALL_AVERAGE}}": overallAverage,
@@ -140,7 +152,7 @@ class ReportGenerator {
 
     return `
       <div class="findings-subsection">
-        <h4 class="subsection-title ${className}">${title}</h4>
+        <h4 class="subsection-title ${className}"><span>${title}</span></h4>
         ${findingsHtml}
       </div>
     `;
@@ -225,7 +237,7 @@ class ReportGenerator {
 
             <div class="phase-content">
               <div class="phase-comments">
-                <span class="phase-label">Issue & Hypothesis:</span>
+                <span class="phase-label">Analysis:</span>
                 <div class="phase-text">${phase.comments}</div>
               </div>
             </div>
@@ -243,6 +255,10 @@ class ReportGenerator {
       .map(
         (audit) => `
         <div class="eyequant-container">
+        <div class="feedback-box top">
+              <div class="feedback-title top"></div>
+              <div class="feedback-text">${audit.topFeedback}</div>
+            </div>
           <div class="eyequant-screenshot">
             ${
               audit.screenshot
@@ -259,18 +275,10 @@ class ReportGenerator {
             `
             }
           </div>
-          
-          <div class="eyequant-feedback">
-            <div class="feedback-box">
-              <div class="feedback-title">Top Feedback</div>
-              <div class="feedback-text">${audit.topFeedback}</div>
-            </div>
-            
-            <div class="feedback-box">
-              <div class="feedback-title">Bottom Feedback</div>
+          <div class="feedback-box bottom">
               <div class="feedback-text">${audit.bottomFeedback}</div>
+              <div class="feedback-title bottom"></div>
             </div>
-          </div>
         </div>
       `
       )

@@ -182,6 +182,65 @@ class DataProcessor {
     };
   }
 
+  getReportDetails() {
+    // Since we're generating a report for a specific client, return details for the first record
+    if (this.rawData.length === 0) {
+      return {
+        user: "aaaaa User",
+        userId: "aaaaa",
+        site: "aaaaa Site",
+        reportDate: "aaaaa Date",
+      };
+    }
+
+    const record = this.rawData[0];
+
+    // Handle both data structures: record.fields.FieldName (raw Airtable) and record.FieldName (processed)
+    const userField = record.fields?.User || record.User;
+    const siteField = record.fields?.["Site Link"] || record["Site Link"];
+    const dateField = record.fields?.["Report Date"] || record["Report Date"];
+
+    // Format the report date if it exists
+    let formattedDate = "Unknown Date";
+    if (dateField) {
+      try {
+        const date = new Date(dateField);
+        if (!isNaN(date.getTime())) {
+          formattedDate = date.toLocaleDateString("en-GB", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+        }
+      } catch (error) {
+        console.warn("Could not parse report date:", dateField);
+      }
+    }
+
+    // Handle User field - Airtable user fields can be objects with name, email, etc.
+    let userName = "Unknown User";
+    let userId = "unknown";
+
+    if (userField) {
+      if (typeof userField === "string") {
+        userName = userField;
+      } else if (userField.name) {
+        userName = userField.name;
+        userId = userField.id || "unknown";
+      } else if (userField.email) {
+        userName = userField.email;
+        userId = userField.id || "unknown";
+      }
+    }
+
+    return {
+      user: userName,
+      userId: userId,
+      site: siteField || "Unknown Site",
+      reportDate: formattedDate,
+    };
+  }
+
   // Generate chart colors
   getChartColor(index, alpha = 1) {
     const colors = [

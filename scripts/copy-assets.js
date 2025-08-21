@@ -44,6 +44,18 @@ async function copyAssetsToClientFolders(outputDir, srcDir) {
 
     console.log(`📁 Copying assets to ${clientFolders.length} client folder(s)...`);
 
+    // Copy static images to output/static folder
+    const imagesSrc = path.join(srcDir, "assets/img");
+    const staticImagesDest = path.join(outputDir, "static");
+
+    try {
+      await fs.access(imagesSrc);
+      await copyDirectory(imagesSrc, staticImagesDest);
+      console.log("✅ Static images copied to output/static folder");
+    } catch (error) {
+      console.log(`⚠️  Could not copy static images to static folder: ${error.message}`);
+    }
+
     // Import sass for CSS compilation
     const sass = await import("sass");
 
@@ -59,17 +71,6 @@ async function copyAssetsToClientFolders(outputDir, srcDir) {
         await copyDirectory(fontsSrc, fontsDest);
       } catch (error) {
         console.log(`⚠️  Could not copy fonts to ${clientFolder}`);
-      }
-
-      // Copy static images to client folder
-      const imagesSrc = path.join(srcDir, "assets/img");
-      const imagesDest = path.join(clientDir, "assets/img");
-
-      try {
-        await fs.access(imagesSrc);
-        await copyDirectory(imagesSrc, imagesDest);
-      } catch (error) {
-        console.log(`⚠️  Could not copy static images to ${clientFolder}`);
       }
 
       // Compile CSS directly to client folder

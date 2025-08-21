@@ -28,6 +28,21 @@ if (args.includes("--recordId=") && !recordId) {
   process.exit(1);
 }
 
+// Check if we're in dev mode and set recordId from .env if needed
+const isDevMode = process.env.NODE_ENV === "development" || process.env.DEV === "true";
+
+if (isDevMode && !recordId) {
+  recordId = process.env.DEV_RECORD;
+  if (recordId) {
+    console.log(`🎯 Dev mode: Using recordId from .env: ${recordId}`);
+  } else {
+    console.error("❌ Dev mode requires a recordId");
+    console.error("   Usage: npm run dev -- --recordId=recXXXXXXXXXXXXXX");
+    console.error("   Or set DEV_RECORD in your .env file");
+    process.exit(1);
+  }
+}
+
 // Check if we have either --all flag or a recordId
 if (!generateAll && !recordId) {
   console.error("❌ Error: Either --all flag or recordId is required");
@@ -80,27 +95,7 @@ async function main() {
   }
 }
 
-// Check if we're in dev mode
-const isDevMode = process.env.NODE_ENV === "development" || process.env.DEV === "true";
-
-// For dev mode, require a recordId (either from command line or environment)
-if (isDevMode) {
-  const devRecordId = recordId || process.env.DEV_RECORD;
-  if (!devRecordId) {
-    console.error("❌ Dev mode requires a recordId");
-    console.error("   Usage: npm run dev -- --recordId=recXXXXXXXXXXXXXX");
-    console.error("   Or set DEV_RECORD in your .env file");
-    process.exit(1);
-  }
-
-  // Use the dev recordId for validation and processing
-  if (!recordId) {
-    recordId = devRecordId;
-    console.log(`🎯 Using default recordId from .env: ${recordId}`);
-  }
-}
-
-// Validate recordId immediately if provided (before any other processing)
+// Validate recordId if we have one (either from command line or dev mode)
 if (recordId) {
   console.log("🚀 Starting validation...");
   try {
@@ -187,6 +182,18 @@ async function copyAssetsToClientFolders(outputDir, srcDir) {
 
     console.log(`📁 Copying assets to ${clientFolders.length} client folder(s)...`);
 
+    // Copy static images to output/static folder
+    const imagesSrc = path.join(srcDir, "assets/img");
+    const staticImagesDest = path.join(outputDir, "static");
+
+    try {
+      await fs.access(imagesSrc);
+      await copyDirectory(imagesSrc, staticImagesDest);
+      console.log("✅ Static images copied to output/static folder");
+    } catch (error) {
+      console.log(`⚠️  Could not copy static images to static folder: ${error.message}`);
+    }
+
     for (const clientFolder of clientFolders) {
       const clientDir = path.join(outputDir, clientFolder);
 
@@ -199,17 +206,6 @@ async function copyAssetsToClientFolders(outputDir, srcDir) {
         await copyDirectory(fontsSrc, fontsDest);
       } catch (error) {
         console.log(`⚠️  Could not copy fonts to ${clientFolder}`);
-      }
-
-      // Copy static images to client folder
-      const imagesSrc = path.join(srcDir, "assets/img");
-      const imagesDest = path.join(clientDir, "assets/img");
-
-      try {
-        await fs.access(imagesSrc);
-        await copyDirectory(imagesSrc, imagesDest);
-      } catch (error) {
-        console.log(`⚠️  Could not copy static images to ${clientFolder}`);
       }
 
       // Compile CSS directly to client folder
@@ -268,19 +264,22 @@ async function generateSingleReport(recordId) {
       try {
         console.log("📋 Loading cached data for single record...");
         const cachedData = await fs.readFile(cachePath, "utf8");
-        const allCachedData = JSON.parse(cachedData);
+        const recordData = JSON.parse(cachedData);
 
-        // Find the specific record in cached data
-        const recordData = allCachedData.find((record) => record.id === recordId);
-        if (recordData) {
+        if (recordData.id === recordId) {
           dataWithLocalImages = [recordData];
           console.log("✅ Using cached data for single record");
         } else {
-          throw new Error(`Record ${recordId} not found in cached data`);
+          throw new Error("Cached record ID doesn't match");
         }
       } catch (error) {
-        console.log("⚠️  Record not found in cache, fetching from Airtable...");
+        console.log("⚠️  No cached data found, fetching from Airtable...");
         dataWithLocalImages = await fetchAndProcessSingleRecord(recordId);
+
+        // Cache just this single record for future dev runs
+        await fs.mkdir(path.dirname(cachePath), { recursive: true });
+        await fs.writeFile(cachePath, JSON.stringify(dataWithLocalImages[0], null, 2));
+        console.log("💾 Cached single record for future dev runs");
       }
     } else {
       // Production mode: fetch fresh data
@@ -330,33 +329,14 @@ async function generateAllReports() {
     console.log("🚀 Starting audit report generation for all records...");
     if (isDevMode) {
       console.log("🔧 Running in DEVELOPMENT mode");
-      console.log("   - Using cached data (no Airtable fetch)");
       console.log("   - Watching for file changes");
       console.log("   - Live reload enabled");
     }
 
     let dataWithLocalImages;
 
-    if (isDevMode) {
-      // Dev mode: try to use cached data
-      const cachePath = path.join(__dirname, "output", "dev-cache.json");
-      try {
-        console.log("📋 Loading cached data...");
-        const cachedData = await fs.readFile(cachePath, "utf8");
-        dataWithLocalImages = JSON.parse(cachedData);
-        console.log("✅ Using cached data");
-      } catch (error) {
-        console.log("⚠️  No cached data found, fetching from Airtable...");
-        dataWithLocalImages = await fetchAndProcessData();
-        // Cache the data for future dev runs
-        await fs.mkdir(path.dirname(cachePath), { recursive: true });
-        await fs.writeFile(cachePath, JSON.stringify(dataWithLocalImages, null, 2));
-        console.log("💾 Data cached for future dev runs");
-      }
-    } else {
-      // Production mode: always fetch fresh data
-      dataWithLocalImages = await fetchAndProcessData();
-    }
+    // Always fetch fresh data (no caching for all records)
+    dataWithLocalImages = await fetchAndProcessData();
 
     // Process the data
     console.log("⚙️  Processing audit data...");
