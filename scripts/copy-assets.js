@@ -9,16 +9,16 @@ async function cleanupOldVersions(clientDir) {
   try {
     const stylesDir = path.join(clientDir, "assets/styles");
     const files = await fs.readdir(stylesDir);
-    const versionedFiles = files.filter(file => 
-      file.startsWith('report.') && file.endsWith('.css') && file !== 'report.css'
+    const versionedFiles = files.filter(
+      (file) => file.startsWith("report.") && file.endsWith(".css") && file !== "report.css"
     );
-    
+
     // Keep only the 3 most recent versioned files per client
     if (versionedFiles.length > 3) {
       const sortedFiles = versionedFiles
-        .map(file => ({ file, mtime: fs.stat(path.join(stylesDir, file)).then(stat => stat.mtime) }))
+        .map((file) => ({ file, mtime: fs.stat(path.join(stylesDir, file)).then((stat) => stat.mtime) }))
         .sort((a, b) => b.mtime - a.mtime);
-      
+
       const filesToDelete = sortedFiles.slice(3);
       for (const { file } of filesToDelete) {
         await fs.unlink(path.join(stylesDir, file));
@@ -111,14 +111,14 @@ async function copyAssetsToClientFolders(outputDir, srcDir) {
         // Add versioning to CSS filename for cache busting
         const timestamp = Date.now();
         const cssFilename = `report.${timestamp}.css`;
-        
+
         await fs.writeFile(path.join(cssDest, cssFilename), result.css, "utf8");
-        
+
         // Also create a symlink or copy of the latest version as report.css for the template
         await fs.writeFile(path.join(cssDest, "report.css"), result.css, "utf8");
-        
+
         console.log(`✅ CSS compiled and copied to ${clientFolder} (versioned as ${cssFilename})`);
-        
+
         // Clean up old versioned files
         await cleanupOldVersions(clientDir);
       } catch (error) {
