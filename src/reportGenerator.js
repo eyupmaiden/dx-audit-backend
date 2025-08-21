@@ -68,6 +68,9 @@ class ReportGenerator {
     //   day: "numeric",
     // });
 
+    // Generate asset version for cache busting
+    const assetVersion = Date.now().toString();
+
     const replacements = {
       "{{USER}}": user,
       "{{USER_ID}}": userId,
@@ -80,6 +83,7 @@ class ReportGenerator {
       "{{LOWEST_CATEGORY_NAME}}": lowestCategory[0],
       "{{LOWEST_CATEGORY_SCORE}}": lowestCategory[1],
       "{{TOTAL_AUDITS}}": totalAudits,
+      "{{ASSET_VERSION}}": assetVersion,
     };
 
     let html = template;
@@ -218,20 +222,22 @@ class ReportGenerator {
           .map(
             (phase) => `
           <div class="journey-phase">
-            <h3 class="phase-title">${phase.name}</h3>
-            
-            <div class="phase-screenshots">
-              <div class="screenshot-container">
-                ${phase.screenshots
-                  .map(
-                    (screenshot) => `
-                  <img src="${screenshot.url}" 
-                       alt="${screenshot.filename}" 
-                       class="screenshot"
-                       loading="lazy">
-                `
-                  )
-                  .join("")}
+            <div class="journey-phase-wrapper">
+              <h3 class="phase-title">${phase.name}</h3>
+              
+              <div class="phase-screenshots">
+                <div class="screenshot-container">
+                  ${phase.screenshots
+                    .map(
+                      (screenshot) => `
+                    <img src="${screenshot.url}" 
+                        alt="${screenshot.filename}" 
+                        class="screenshot"
+                        loading="lazy">
+                  `
+                    )
+                    .join("")}
+                </div>
               </div>
             </div>
 
