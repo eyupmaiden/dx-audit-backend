@@ -201,7 +201,7 @@ body {
     text-shadow: 3px 3px 35px #2b0473;
 
     @include mobile {
-      font-size: 3.6rem;
+      font-size: 2.8rem;
     }
   }
 
@@ -307,6 +307,10 @@ body {
     font-weight: 400;
     font-size: 20px;
     line-height: 1.6;
+
+    @include mobile {
+      font-size: 18px;
+    }
   }
 }
 
@@ -924,6 +928,10 @@ body {
   position: relative;
   overflow: hidden;
 
+  @include mobile {
+    padding: 3rem $spacing-xl !important;
+  }
+
   &::after {
     width: 100%;
     height: 100%;
@@ -944,6 +952,10 @@ body {
     max-width: 600px;
     position: relative;
     z-index: 1;
+
+    @include mobile {
+      font-size: 2.4rem;
+    }
   }
 
   .cta-subtitle {
@@ -999,6 +1011,11 @@ body {
     z-index: 1;
     margin-bottom: $spacing-lg;
     box-shadow: 0 4px 15px rgba($accent-color, 0.3);
+    white-space: nowrap;
+
+    @include mobile {
+      padding: $spacing-md 1.5rem;
+    }
 
     &:hover {
       background: #ffff33;
