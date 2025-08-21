@@ -1,5 +1,3 @@
-import Airtable from "airtable";
-
 class AirtableClient {
   constructor() {
     this.apiKey = process.env.AIRTABLE_API_KEY;
@@ -23,24 +21,54 @@ class AirtableClient {
       );
     }
 
-    // Configure Airtable with API key
-    Airtable.configure({ apiKey: this.apiKey });
+    // Base URL for Airtable REST API v0
+    this.baseUrl = `https://api.airtable.com/v0/${this.baseId}/${encodeURIComponent(this.tableName)}`;
+  }
 
-    // Initialize the base and table
-    this.base = Airtable.base(this.baseId);
-    this.table = this.base(this.tableName);
+  async makeRequest(endpoint, options = {}) {
+    const url = `${this.baseUrl}${endpoint}`;
+
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+      ...options,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Airtable API error: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
   }
 
   async getAllRecords() {
     try {
       let allRecords = [];
+      let offset = null;
 
-      // Use the official Airtable.js library to fetch all records
-      await this.table.select().eachPage((records, fetchNextPage) => {
-        allRecords = allRecords.concat(records);
-        console.log(`Fetched ${records.length} records. Total: ${allRecords.length}`);
-        fetchNextPage();
-      });
+      do {
+        const params = new URLSearchParams({
+          timeZone: "UTC",
+          userLocale: "en",
+        });
+
+        if (offset) {
+          params.append("offset", offset);
+        }
+
+        const response = await this.makeRequest(`?${params.toString()}`);
+
+        if (response.records) {
+          allRecords = allRecords.concat(response.records);
+          console.log(`Fetched ${response.records.length} records. Total: ${allRecords.length}`);
+        }
+
+        offset = response.offset;
+      } while (offset);
 
       console.log(`Successfully fetched ${allRecords.length} total records from Airtable`);
       return allRecords;
@@ -53,16 +81,27 @@ class AirtableClient {
   async getRecordsWithFilter(filterFormula) {
     try {
       let allRecords = [];
+      let offset = null;
 
-      // Use the official Airtable.js library with filter
-      await this.table
-        .select({
+      do {
+        const params = new URLSearchParams({
+          timeZone: "UTC",
+          userLocale: "en",
           filterByFormula: filterFormula,
-        })
-        .eachPage((records, fetchNextPage) => {
-          allRecords = allRecords.concat(records);
-          fetchNextPage();
         });
+
+        if (offset) {
+          params.append("offset", offset);
+        }
+
+        const response = await this.makeRequest(`?${params.toString()}`);
+
+        if (response.records) {
+          allRecords = allRecords.concat(response.records);
+        }
+
+        offset = response.offset;
+      } while (offset);
 
       console.log(`Fetched ${allRecords.length} filtered records from Airtable`);
       return allRecords;
@@ -74,9 +113,14 @@ class AirtableClient {
 
   async getRecordById(recordId) {
     try {
-      const record = await this.table.find(recordId);
+      const params = new URLSearchParams({
+        timeZone: "UTC",
+        userLocale: "en",
+      });
+
+      const response = await this.makeRequest(`/${recordId}?${params.toString()}`);
       console.log(`Successfully fetched record ${recordId} from Airtable`);
-      return record;
+      return response;
     } catch (error) {
       console.error("Error fetching record from Airtable:", error.message);
       throw error;

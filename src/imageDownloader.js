@@ -220,6 +220,7 @@ class ImageDownloader {
 
   updateRecordWithLocalImages(records, downloadedImages) {
     return records.map((record) => {
+      // Preserve ALL original fields from the record, not just record.fields
       const updatedFields = { ...record.fields };
       const client = (record.fields?.Client || record.Client || "Unknown").trim();
 
@@ -238,7 +239,7 @@ class ImageDownloader {
         }
       });
 
-      // Update record fields with local image paths
+      // Update record fields with local image paths (only update image fields)
       Object.keys(imagesByField).forEach((fieldName) => {
         const images = imagesByField[fieldName];
         if (images.length === 1) {
@@ -250,6 +251,9 @@ class ImageDownloader {
         }
       });
 
+      // Return the original record structure with ALL original data preserved
+      // but with updated image fields. The phase comments are in the root level of the record,
+      // so we need to preserve those too.
       return {
         ...record,
         fields: updatedFields,

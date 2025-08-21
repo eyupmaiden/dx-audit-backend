@@ -138,17 +138,50 @@ class DataProcessor {
         findings: this.categories.map((category) => ({
           category,
           score: parseInt(record.fields?.[`${category} Score`] || record[`${category} Score`]) || 0,
-          issue:
+          issue: this.parseRichText(
             record.fields?.[`${category} Issue`] ||
-            record[`${category} Issue`] ||
-            record.fields?.[`${category} Issues`] ||
-            record[`${category} Issues`] ||
-            "No issues recorded",
-          experiment:
+              record[`${category} Issue`] ||
+              record[`${category} Issues`] ||
+              record[`${category} Issues`] ||
+              "No issues recorded"
+          ),
+          experiment: this.parseRichText(
             record.fields?.[`${category} Experiments`] ||
-            record[`${category} Experiments`] ||
-            "No experiments suggested",
+              record[`${category} Experiments`] ||
+              "No experiments suggested"
+          ),
         })),
+        phases: [
+          {
+            name: "Discovery phase",
+            screenshots: this.parseScreenshots(
+              record.fields?.["Discovery Phase Screenshots"] || record["Discovery Phase Screenshots"]
+            ),
+            comments: this.parseRichText(
+              record["Discovery Phase Comments"] || record.fields?.["Discovery Phase Comments"] || "No issues recorded"
+            ),
+          },
+          {
+            name: "Decision phase",
+            screenshots: this.parseScreenshots(
+              record.fields?.["Decision Phase Screenshots"] || record["Decision Phase Screenshots"]
+            ),
+            comments: this.parseRichText(
+              record["Decision Phase Comments"] || record.fields?.["Decision Phase Comments"] || "No issues recorded"
+            ),
+          },
+          {
+            name: "Conversion phase",
+            screenshots: this.parseScreenshots(
+              record.fields?.["Conversion Phase Screenshots"] || record["Conversion Phase Screenshots"]
+            ),
+            comments: this.parseRichText(
+              record["Conversion Phase Comments"] ||
+                record.fields?.["Conversion Phase Comments"] ||
+                "No issues recorded"
+            ),
+          },
+        ],
       };
     });
   }
@@ -275,26 +308,29 @@ class DataProcessor {
             screenshots: this.parseScreenshots(
               record.fields?.["Discovery Phase Screenshots"] || record["Discovery Phase Screenshots"]
             ),
-            comments:
-              record.fields?.["Discovery Phase Comments"] || record["Discovery Phase Comments"] || "No issues recorded",
+            comments: this.parseRichText(
+              record["Discovery Phase Comments"] || record.fields?.["Discovery Phase Comments"] || "No issues recorded"
+            ),
           },
           {
             name: "Decision phase",
             screenshots: this.parseScreenshots(
               record.fields?.["Decision Phase Screenshots"] || record["Decision Phase Screenshots"]
             ),
-            comments:
-              record.fields?.["Decision Phase Comments"] || record["Decision Phase Comments"] || "No issues recorded",
+            comments: this.parseRichText(
+              record["Decision Phase Comments"] || record.fields?.["Decision Phase Comments"] || "No issues recorded"
+            ),
           },
           {
             name: "Conversion phase",
             screenshots: this.parseScreenshots(
               record.fields?.["Conversion Phase Screenshots"] || record["Conversion Phase Screenshots"]
             ),
-            comments:
-              record.fields?.["Conversion Phase Comments"] ||
+            comments: this.parseRichText(
               record["Conversion Phase Comments"] ||
-              "No issues recorded",
+                record.fields?.["Conversion Phase Comments"] ||
+                "No issues recorded"
+            ),
           },
         ],
       };
@@ -316,9 +352,12 @@ class DataProcessor {
         id: record.fields?.ID || record.ID || record.id,
         screenshot:
           this.parseScreenshots(record.fields?.["Eyequant Screenshot"] || record["Eyequant Screenshot"])[0] || null,
-        topFeedback: record.fields?.["Top Feedback"] || record["Top Feedback"] || "No top feedback provided",
-        bottomFeedback:
-          record.fields?.["Bottom Feedback"] || record["Bottom Feedback"] || "No bottom feedback provided",
+        topFeedback: this.parseRichText(
+          record.fields?.["Top Feedback"] || record["Top Feedback"] || "No top feedback provided"
+        ),
+        bottomFeedback: this.parseRichText(
+          record.fields?.["Bottom Feedback"] || record["Bottom Feedback"] || "No bottom feedback provided"
+        ),
       };
     });
   }
@@ -327,10 +366,50 @@ class DataProcessor {
   parseScreenshots(screenshotField) {
     if (!screenshotField) return [];
 
-    return screenshotField.split(",").map((url) => {
-      const filename = url.split("/").pop() || "screenshot.png";
-      return { url: url.trim(), filename };
-    });
+    // Handle REST API format: array of objects with url, filename, etc.
+    if (Array.isArray(screenshotField)) {
+      return screenshotField.map((attachment) => {
+        // REST API returns attachment objects with url, filename, etc.
+        if (attachment.url) {
+          return { url: attachment.url, filename: attachment.filename || "screenshot.png" };
+        }
+        // Fallback for other object formats
+        return { url: String(attachment), filename: "screenshot.png" };
+      });
+    }
+
+    // Handle old format: comma-separated string
+    if (typeof screenshotField === "string") {
+      return screenshotField.split(",").map((url) => {
+        const filename = url.split("/").pop() || "screenshot.png";
+        return { url: url.trim(), filename };
+      });
+    }
+
+    // Handle single object
+    if (screenshotField && typeof screenshotField === "object" && screenshotField.url) {
+      return [{ url: screenshotField.url, filename: screenshotField.filename || "screenshot.png" }];
+    }
+
+    return [];
+  }
+
+  // Parse rich text markdown to HTML
+  parseRichText(text) {
+    if (!text || typeof text !== "string") return text;
+
+    // Convert markdown to HTML
+    let html = text
+      // Convert line breaks to <br> tags
+      .replace(/\n/g, "</p><p>")
+      // Convert **bold** to <strong> tags
+      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+      // Convert *italic* to <em> tags
+      .replace(/\*(.*?)\*/g, "<em>$1</em>")
+      // Convert `code` to <code> tags
+      .replace(/`(.*?)`/g, "<code>$1</code>");
+
+    return html;
   }
 
   // Get chart options for Chart.js

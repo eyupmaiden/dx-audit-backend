@@ -244,7 +244,7 @@ class ReportGenerator {
             <div class="phase-content">
               <div class="phase-comments">
                 <span class="phase-label">Analysis:</span>
-                <div class="phase-text">${phase.comments}</div>
+                <div class="phase-text"><p>${phase.comments}</p></div>
               </div>
             </div>
           </div>
@@ -263,7 +263,7 @@ class ReportGenerator {
         <div class="eyequant-container">
         <div class="feedback-box top">
               <div class="feedback-title top"></div>
-              <div class="feedback-text">${audit.topFeedback}</div>
+              <div class="feedback-text"><p>${audit.topFeedback}</p></div>
             </div>
           <div class="eyequant-screenshot">
             ${
@@ -282,7 +282,7 @@ class ReportGenerator {
             }
           </div>
           <div class="feedback-box bottom">
-              <div class="feedback-text">${audit.bottomFeedback}</div>
+              <div class="feedback-text"><p>${audit.bottomFeedback}</p></div>
               <div class="feedback-title bottom"></div>
             </div>
         </div>
