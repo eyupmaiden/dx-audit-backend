@@ -462,6 +462,75 @@ body {
     }
   }
 
+  // New layout for competitor comparison
+  &.eyequant-container--with-competitor {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: $spacing-lg;
+
+    @include mobile {
+      grid-template-rows: auto auto auto;
+    }
+
+    .feedback-box.full-width {
+      grid-column: 1;
+      grid-row: auto;
+      width: 100%;
+      margin-bottom: $spacing-lg;
+
+      @include mobile {
+        margin-bottom: $spacing-md;
+      }
+    }
+
+    .eyequant-screenshots-comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: $spacing-lg;
+      grid-column: 1;
+      grid-row: 2;
+
+      @include mobile {
+        grid-template-columns: 1fr;
+        gap: $spacing-md;
+      }
+
+      .eyequant-screenshot {
+        grid-column: auto;
+        grid-row: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &.original {
+          grid-column: 1;
+        }
+
+        &.competitor {
+          grid-column: 2;
+
+          @include mobile {
+            grid-column: 1;
+            grid-row: 2;
+          }
+        }
+
+        .eyequant-image {
+          max-width: 100%;
+          height: auto;
+          border-radius: $border-radius-sm;
+          border: 1px solid $border-color;
+          box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+        }
+      }
+    }
+
+    // Remove arrow images from feedback titles when competitor is present
+    .feedback-title {
+      display: none;
+    }
+  }
+
   .feedback-box {
     background: $background-light;
     border: 1px solid $border-color;

@@ -162,6 +162,7 @@ class ImageDownloader {
         "Decision Phase Screenshots",
         "Conversion Phase Screenshots",
         "Eyequant Screenshot",
+        "Competitor Eyequant Screenshot",
       ];
 
       for (const fieldName of imageFields) {

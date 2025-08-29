@@ -352,6 +352,10 @@ class DataProcessor {
         id: record.fields?.ID || record.ID || record.id,
         screenshot:
           this.parseScreenshots(record.fields?.["Eyequant Screenshot"] || record["Eyequant Screenshot"])[0] || null,
+        competitorScreenshot:
+          this.parseScreenshots(
+            record.fields?.["Competitor Eyequant Screenshot"] || record["Competitor Eyequant Screenshot"]
+          )[0] || null,
         topFeedback: this.parseRichText(
           record.fields?.["Top Feedback"] || record["Top Feedback"] || "No top feedback provided"
         ),
