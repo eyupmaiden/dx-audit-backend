@@ -27,12 +27,12 @@ const imageConfigs = {
 };
 
 // Get image configuration by type
-export function getImageConfig(type) {
+export const getImageConfig = (type) => {
   return imageConfigs[type] || imageConfigs.default;
-}
+};
 
 // Determine image type from Airtable field name
-export function getImageTypeFromField(fieldName) {
+export const getImageTypeFromField = (fieldName) => {
   const fieldNameLower = fieldName.toLowerCase();
 
   if (fieldNameLower.includes("eyequant")) {
@@ -44,15 +44,15 @@ export function getImageTypeFromField(fieldName) {
   }
 
   return "default";
-}
+};
 
 // Get all available image types
-export function getAvailableImageTypes() {
+export const getAvailableImageTypes = () => {
   return Object.keys(imageConfigs);
-}
+};
 
 // Validate image configuration
-export function validateImageConfig(config) {
+export const validateImageConfig = (config) => {
   const requiredFields = ["maxWidth", "maxHeight", "fit", "format", "quality"];
 
   for (const field of requiredFields) {
@@ -70,4 +70,4 @@ export function validateImageConfig(config) {
   }
 
   return true;
-}
+};

@@ -1,36 +1,34 @@
-class AirtableClient {
-  constructor() {
-    this.apiKey = process.env.AIRTABLE_API_KEY;
-    this.baseId = process.env.AIRTABLE_BASE_ID;
-    this.tableName = process.env.AIRTABLE_TABLE_NAME;
+export const createAirtableClient = () => {
+  const apiKey = process.env.AIRTABLE_API_KEY;
+  const baseId = process.env.AIRTABLE_BASE_ID;
+  const tableName = process.env.AIRTABLE_TABLE_NAME;
 
-    // Validate required environment variables
-    if (!this.apiKey) {
-      throw new Error(
-        "AIRTABLE_API_KEY environment variable is required. Please check your .env file or ensure environment variables are passed to the child process."
-      );
-    }
-    if (!this.baseId) {
-      throw new Error(
-        "AIRTABLE_BASE_ID environment variable is required. Please check your .env file or ensure environment variables are passed to the child process."
-      );
-    }
-    if (!this.tableName) {
-      throw new Error(
-        "AIRTABLE_TABLE_NAME environment variable is required. Please check your .env file or ensure environment variables are passed to the child process."
-      );
-    }
-
-    // Base URL for Airtable REST API v0
-    this.baseUrl = `https://api.airtable.com/v0/${this.baseId}/${encodeURIComponent(this.tableName)}`;
+  // Validate required environment variables
+  if (!apiKey) {
+    throw new Error(
+      "AIRTABLE_API_KEY environment variable is required. Please check your .env file or ensure environment variables are passed to the child process."
+    );
+  }
+  if (!baseId) {
+    throw new Error(
+      "AIRTABLE_BASE_ID environment variable is required. Please check your .env file or ensure environment variables are passed to the child process."
+    );
+  }
+  if (!tableName) {
+    throw new Error(
+      "AIRTABLE_TABLE_NAME environment variable is required. Please check your .env file or ensure environment variables are passed to the child process."
+    );
   }
 
-  async makeRequest(endpoint, options = {}) {
-    const url = `${this.baseUrl}${endpoint}`;
+  // Base URL for Airtable REST API v0
+  const baseUrl = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}`;
+
+  const makeRequest = async (endpoint, options = {}) => {
+    const url = `${baseUrl}${endpoint}`;
 
     const response = await fetch(url, {
       headers: {
-        Authorization: `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
         ...options.headers,
       },
@@ -43,9 +41,9 @@ class AirtableClient {
     }
 
     return response.json();
-  }
+  };
 
-  async getAllRecords() {
+  const getAllRecords = async () => {
     try {
       let allRecords = [];
       let offset = null;
@@ -60,7 +58,7 @@ class AirtableClient {
           params.append("offset", offset);
         }
 
-        const response = await this.makeRequest(`?${params.toString()}`);
+        const response = await makeRequest(`?${params.toString()}`);
 
         if (response.records) {
           allRecords = allRecords.concat(response.records);
@@ -76,9 +74,9 @@ class AirtableClient {
       console.error("Error fetching records from Airtable:", error.message);
       throw error;
     }
-  }
+  };
 
-  async getRecordsWithFilter(filterFormula) {
+  const getRecordsWithFilter = async (filterFormula) => {
     try {
       let allRecords = [];
       let offset = null;
@@ -94,7 +92,7 @@ class AirtableClient {
           params.append("offset", offset);
         }
 
-        const response = await this.makeRequest(`?${params.toString()}`);
+        const response = await makeRequest(`?${params.toString()}`);
 
         if (response.records) {
           allRecords = allRecords.concat(response.records);
@@ -109,31 +107,41 @@ class AirtableClient {
       console.error("Error fetching filtered records:", error.message);
       throw error;
     }
-  }
+  };
 
-  async getRecordById(recordId) {
+  const getRecordById = async (recordId) => {
     try {
       const params = new URLSearchParams({
         timeZone: "UTC",
         userLocale: "en",
       });
 
-      const response = await this.makeRequest(`/${recordId}?${params.toString()}`);
+      const response = await makeRequest(`/${recordId}?${params.toString()}`);
       console.log(`Successfully fetched record ${recordId} from Airtable`);
       return response;
     } catch (error) {
       console.error("Error fetching record from Airtable:", error.message);
       throw error;
     }
-  }
+  };
 
-  // Helper method to get just the field data without Airtable metadata
-  extractFieldData(records) {
+  // Helper function to get just the field data without Airtable metadata
+  const extractFieldData = (records) => {
     return records.map((record) => ({
       id: record.id,
       ...record.fields,
     }));
-  }
-}
+  };
 
-export default AirtableClient;
+  // Return an object with all the methods
+  return {
+    makeRequest,
+    getAllRecords,
+    getRecordsWithFilter,
+    getRecordById,
+    extractFieldData,
+  };
+};
+
+// For backward compatibility, also export as default
+export default createAirtableClient;

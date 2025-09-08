@@ -1,23 +1,20 @@
-class DataProcessor {
-  constructor(rawData) {
-    this.rawData = rawData;
-    this.categories = [
-      "Clarity & Purpose",
-      "Trust & Credibility",
-      "Mobile Experience",
-      "Information Hierarchy",
-      "Friction Points",
-      "Visual Design",
-      "Speed & Performance",
-      "User Flow Logic",
-    ];
-  }
+export const createDataProcessor = (rawData) => {
+  const categories = [
+    "Clarity & Purpose",
+    "Trust & Credibility",
+    "Mobile Experience",
+    "Information Hierarchy",
+    "Friction Points",
+    "Visual Design",
+    "Speed & Performance",
+    "User Flow Logic",
+  ];
 
   // Extract scores for radar/bar charts
-  getScoreData() {
-    return this.rawData.map((record) => {
+  const getScoreData = () => {
+    return rawData.map((record) => {
       const scores = {};
-      this.categories.forEach((category) => {
+      categories.forEach((category) => {
         const scoreField = `${category} Score`;
         scores[category] = parseInt(record.fields?.[scoreField] || record[scoreField]) || 0;
       });
@@ -36,41 +33,41 @@ class DataProcessor {
         scores,
       };
     });
-  }
+  };
 
   // Get average scores across all audits for summary chart
-  getAverageScores() {
-    const scoreData = this.getScoreData();
+  const getAverageScores = () => {
+    const scoreData = getScoreData();
     const averages = {};
 
-    this.categories.forEach((category) => {
+    categories.forEach((category) => {
       const total = scoreData.reduce((sum, audit) => sum + audit.scores[category], 0);
       averages[category] = parseFloat((total / scoreData.length).toFixed(1));
     });
 
     return averages;
-  }
+  };
 
   // Format data for Chart.js radar chart
-  getRadarChartData(clientFilter = null) {
-    const scoreData = this.getScoreData();
+  const getRadarChartData = (clientFilter = null) => {
+    const scoreData = getScoreData();
     const filteredData = clientFilter
       ? scoreData.filter((audit) => (audit.client || audit.Client) === clientFilter)
       : scoreData;
 
     const datasets = filteredData.map((audit, index) => ({
       label: `${audit.client} (ID: ${audit.id})`,
-      data: this.categories.map((category) => audit.scores[category]),
-      borderColor: this.getChartColor(index),
-      backgroundColor: this.getChartColor(index, 0.2),
-      pointBackgroundColor: this.getChartColor(index),
+      data: categories.map((category) => audit.scores[category]),
+      borderColor: getChartColor(index),
+      backgroundColor: getChartColor(index, 0.2),
+      pointBackgroundColor: getChartColor(index),
       pointBorderColor: "#fff",
       pointHoverBackgroundColor: "#fff",
-      pointHoverBorderColor: this.getChartColor(index),
+      pointHoverBorderColor: getChartColor(index),
     }));
 
     // Process labels for multiline display
-    const processedLabels = this.categories.map((category) => {
+    const processedLabels = categories.map((category) => {
       const parts = category.split(" & ");
       if (parts.length > 1) {
         // If there's an "&", split it into lines with "&" on the first line
@@ -102,29 +99,29 @@ class DataProcessor {
       labels: processedLabels,
       datasets,
     };
-  }
+  };
 
   // Format data for Chart.js bar chart
-  getBarChartData() {
-    const averages = this.getAverageScores();
+  const getBarChartData = () => {
+    const averages = getAverageScores();
 
     return {
-      labels: this.categories,
+      labels: categories,
       datasets: [
         {
           label: "Average Scores",
-          data: this.categories.map((category) => averages[category]),
-          backgroundColor: this.categories.map((_, index) => this.getChartColor(index, 0.6)),
-          borderColor: this.categories.map((_, index) => this.getChartColor(index)),
+          data: categories.map((category) => averages[category]),
+          backgroundColor: categories.map((_, index) => getChartColor(index, 0.6)),
+          borderColor: categories.map((_, index) => getChartColor(index)),
           borderWidth: 1,
         },
       ],
     };
-  }
+  };
 
   // Get all issues and experiments for detailed sections
-  getDetailedFindings() {
-    return this.rawData.map((record) => {
+  const getDetailedFindings = () => {
+    return rawData.map((record) => {
       // Handle Client field as simple text field
       let clientName = "Unknown Client";
       const clientField = record.fields?.Client || record.Client;
@@ -135,17 +132,17 @@ class DataProcessor {
       return {
         client: clientName,
         id: record.fields?.ID || record.ID || record.id,
-        findings: this.categories.map((category) => ({
+        findings: categories.map((category) => ({
           category,
           score: parseInt(record.fields?.[`${category} Score`] || record[`${category} Score`]) || 0,
-          issue: this.parseRichText(
+          issue: parseRichText(
             record.fields?.[`${category} Issue`] ||
               record[`${category} Issue`] ||
               record[`${category} Issues`] ||
               record[`${category} Issues`] ||
               "No issues recorded"
           ),
-          experiment: this.parseRichText(
+          experiment: parseRichText(
             record.fields?.[`${category} Experiments`] ||
               record[`${category} Experiments`] ||
               "No experiments suggested"
@@ -154,28 +151,28 @@ class DataProcessor {
         phases: [
           {
             name: "Discovery phase",
-            screenshots: this.parseScreenshots(
+            screenshots: parseScreenshots(
               record.fields?.["Discovery Phase Screenshots"] || record["Discovery Phase Screenshots"]
             ),
-            comments: this.parseRichText(
+            comments: parseRichText(
               record["Discovery Phase Comments"] || record.fields?.["Discovery Phase Comments"] || "No issues recorded"
             ),
           },
           {
             name: "Decision phase",
-            screenshots: this.parseScreenshots(
+            screenshots: parseScreenshots(
               record.fields?.["Decision Phase Screenshots"] || record["Decision Phase Screenshots"]
             ),
-            comments: this.parseRichText(
+            comments: parseRichText(
               record["Decision Phase Comments"] || record.fields?.["Decision Phase Comments"] || "No issues recorded"
             ),
           },
           {
             name: "Conversion phase",
-            screenshots: this.parseScreenshots(
+            screenshots: parseScreenshots(
               record.fields?.["Conversion Phase Screenshots"] || record["Conversion Phase Screenshots"]
             ),
-            comments: this.parseRichText(
+            comments: parseRichText(
               record["Conversion Phase Comments"] ||
                 record.fields?.["Conversion Phase Comments"] ||
                 "No issues recorded"
@@ -184,16 +181,16 @@ class DataProcessor {
         ],
       };
     });
-  }
+  };
 
   // Get summary statistics for the header cards
-  getSummaryStats() {
-    const scoreData = this.getScoreData();
-    const averages = this.getAverageScores();
+  const getSummaryStats = () => {
+    const scoreData = getScoreData();
+    const averages = getAverageScores();
 
     // Calculate overall average
     const totalScore = Object.values(averages).reduce((sum, score) => sum + score, 0);
-    const overallAverage = parseFloat((totalScore / this.categories.length).toFixed(1));
+    const overallAverage = parseFloat((totalScore / categories.length).toFixed(1));
 
     // Find highest and lowest categories
     const categoryScores = Object.entries(averages);
@@ -213,11 +210,11 @@ class DataProcessor {
       lowestCategory,
       totalAudits: scoreData.length,
     };
-  }
+  };
 
-  getReportDetails() {
+  const getReportDetails = () => {
     // Since we're generating a report for a specific client, return details for the first record
-    if (this.rawData.length === 0) {
+    if (rawData.length === 0) {
       return {
         user: "aaaaa User",
         userId: "aaaaa",
@@ -226,7 +223,7 @@ class DataProcessor {
       };
     }
 
-    const record = this.rawData[0];
+    const record = rawData[0];
 
     // Handle both data structures: record.fields.FieldName (raw Airtable) and record.FieldName (processed)
     const userField = record.fields?.User || record.User;
@@ -272,10 +269,10 @@ class DataProcessor {
       site: siteField || "Unknown Site",
       reportDate: formattedDate,
     };
-  }
+  };
 
   // Generate chart colors
-  getChartColor(index, alpha = 1) {
+  const getChartColor = (index, alpha = 1) => {
     const colors = [
       `rgba(99, 37, 244, ${alpha})`, // Purple
       `rgba(230, 8, 52, ${alpha})`, // Red
@@ -287,11 +284,11 @@ class DataProcessor {
       `rgba(156, 39, 176, ${alpha})`, // Light Purple
     ];
     return colors[index % colors.length];
-  }
+  };
 
   // Get user journey data
-  getUserJourneyData() {
-    return this.rawData.map((record) => {
+  const getUserJourneyData = () => {
+    return rawData.map((record) => {
       // Handle Client field as simple text field
       let clientName = "Unknown Client";
       const clientField = record.fields?.Client || record.Client;
@@ -305,28 +302,28 @@ class DataProcessor {
         phases: [
           {
             name: "Discovery phase",
-            screenshots: this.parseScreenshots(
+            screenshots: parseScreenshots(
               record.fields?.["Discovery Phase Screenshots"] || record["Discovery Phase Screenshots"]
             ),
-            comments: this.parseRichText(
+            comments: parseRichText(
               record["Discovery Phase Comments"] || record.fields?.["Discovery Phase Comments"] || "No issues recorded"
             ),
           },
           {
             name: "Decision phase",
-            screenshots: this.parseScreenshots(
+            screenshots: parseScreenshots(
               record.fields?.["Decision Phase Screenshots"] || record["Decision Phase Screenshots"]
             ),
-            comments: this.parseRichText(
+            comments: parseRichText(
               record["Decision Phase Comments"] || record.fields?.["Decision Phase Comments"] || "No issues recorded"
             ),
           },
           {
             name: "Conversion phase",
-            screenshots: this.parseScreenshots(
+            screenshots: parseScreenshots(
               record.fields?.["Conversion Phase Screenshots"] || record["Conversion Phase Screenshots"]
             ),
-            comments: this.parseRichText(
+            comments: parseRichText(
               record["Conversion Phase Comments"] ||
                 record.fields?.["Conversion Phase Comments"] ||
                 "No issues recorded"
@@ -335,11 +332,11 @@ class DataProcessor {
         ],
       };
     });
-  }
+  };
 
   // Get Eyequant data
-  getEyequantData() {
-    return this.rawData.map((record) => {
+  const getEyequantData = () => {
+    return rawData.map((record) => {
       // Handle Client field as simple text field
       let clientName = "Unknown Client";
       const clientField = record.fields?.Client || record.Client;
@@ -351,23 +348,23 @@ class DataProcessor {
         client: clientName,
         id: record.fields?.ID || record.ID || record.id,
         screenshot:
-          this.parseScreenshots(record.fields?.["Eyequant Screenshot"] || record["Eyequant Screenshot"])[0] || null,
+          parseScreenshots(record.fields?.["Eyequant Screenshot"] || record["Eyequant Screenshot"])[0] || null,
         competitorScreenshot:
-          this.parseScreenshots(
+          parseScreenshots(
             record.fields?.["Competitor Eyequant Screenshot"] || record["Competitor Eyequant Screenshot"]
           )[0] || null,
-        topFeedback: this.parseRichText(
+        topFeedback: parseRichText(
           record.fields?.["Top Feedback"] || record["Top Feedback"] || "No top feedback provided"
         ),
-        bottomFeedback: this.parseRichText(
+        bottomFeedback: parseRichText(
           record.fields?.["Bottom Feedback"] || record["Bottom Feedback"] || "No bottom feedback provided"
         ),
       };
     });
-  }
+  };
 
   // Parse screenshot field into array of screenshot objects
-  parseScreenshots(screenshotField) {
+  const parseScreenshots = (screenshotField) => {
     if (!screenshotField) return [];
 
     // Handle REST API format: array of objects with url, filename, etc.
@@ -396,10 +393,10 @@ class DataProcessor {
     }
 
     return [];
-  }
+  };
 
   // Parse rich text markdown to HTML
-  parseRichText(text) {
+  const parseRichText = (text) => {
     if (!text || typeof text !== "string") return text;
 
     // Convert markdown to HTML
@@ -414,10 +411,10 @@ class DataProcessor {
       .replace(/`(.*?)`/g, "<code>$1</code>");
 
     return html;
-  }
+  };
 
   // Get chart options for Chart.js
-  getChartOptions(type) {
+  const getChartOptions = (type) => {
     const baseOptions = {
       responsive: true,
       maintainAspectRatio: false,
@@ -454,7 +451,25 @@ class DataProcessor {
     }
 
     return baseOptions;
-  }
-}
+  };
 
-export default DataProcessor;
+  // Return an object with all the methods
+  return {
+    getScoreData,
+    getAverageScores,
+    getRadarChartData,
+    getBarChartData,
+    getDetailedFindings,
+    getSummaryStats,
+    getReportDetails,
+    getChartColor,
+    getUserJourneyData,
+    getEyequantData,
+    parseScreenshots,
+    parseRichText,
+    getChartOptions,
+  };
+};
+
+// For backward compatibility, also export as default
+export default createDataProcessor;

@@ -4,25 +4,22 @@ import axios from "axios";
 import sharp from "sharp";
 import { getImageConfig, getImageTypeFromField } from "./imageConfig.js";
 
-class ImageDownloader {
-  constructor(outputDir) {
-    this.outputDir = outputDir;
-    this.assetsDir = path.join(outputDir, "assets");
-    this.imagesDir = path.join(this.assetsDir, "img");
-  }
+export const createImageDownloader = (outputDir) => {
+  const assetsDir = path.join(outputDir, "assets");
+  const imagesDir = path.join(assetsDir, "img");
 
-  async ensureAssetsDirectory() {
+  const ensureAssetsDirectory = async () => {
     // No longer needed - we only save to client folders
     return;
-  }
+  };
 
-  getClientImagesDir(client) {
+  const getClientImagesDir = (client) => {
     const cleanClient = client ? client.toLowerCase().replace(/[^a-z0-9]/g, "-") : "unknown";
-    const clientDir = path.join(this.outputDir, cleanClient, "assets", "img");
+    const clientDir = path.join(outputDir, cleanClient, "assets", "img");
     return clientDir;
-  }
+  };
 
-  generateDescriptiveFilename(originalFilename, client, fieldName, index = 0) {
+  const generateDescriptiveFilename = (originalFilename, client, fieldName, index = 0) => {
     // Clean client name for filename
     const cleanClient = client ? client.toLowerCase().replace(/[^a-z0-9]/g, "-") : "unknown";
 
@@ -51,9 +48,9 @@ class ImageDownloader {
     descriptiveName += extension;
 
     return descriptiveName;
-  }
+  };
 
-  async optimizeImage(imageBuffer, filename, imageType = "default") {
+  const optimizeImage = async (imageBuffer, filename, imageType = "default") => {
     try {
       const config = getImageConfig(imageType);
       console.log(`🔧 Optimizing ${filename} with ${imageType} settings...`);
@@ -95,9 +92,9 @@ class ImageDownloader {
       // Return original buffer if optimization fails
       return imageBuffer;
     }
-  }
+  };
 
-  async downloadImage(imageUrl, filename, fieldName = "", client = "", index = 0) {
+  const downloadImage = async (imageUrl, filename, fieldName = "", client = "", index = 0) => {
     try {
       console.log(`📥 Downloading image: ${filename}`);
 
@@ -138,14 +135,14 @@ class ImageDownloader {
       console.error(`❌ Failed to download ${filename}:`, error.message);
       return null;
     }
-  }
+  };
 
-  sanitizeFilename(filename) {
+  const sanitizeFilename = (filename) => {
     // Remove or replace invalid characters
     return filename.replace(/[<>:"/\\|?*]/g, "_");
-  }
+  };
 
-  async downloadAllImages(records) {
+  const downloadAllImages = async (records) => {
     // No longer need to ensure main assets directory
 
     const downloadedImages = [];
@@ -217,9 +214,9 @@ class ImageDownloader {
     }
 
     return downloadedImages;
-  }
+  };
 
-  updateRecordWithLocalImages(records, downloadedImages) {
+  const updateRecordWithLocalImages = (records, downloadedImages) => {
     return records.map((record) => {
       // Preserve ALL original fields from the record, not just record.fields
       const updatedFields = { ...record.fields };
@@ -260,7 +257,20 @@ class ImageDownloader {
         fields: updatedFields,
       };
     });
-  }
-}
+  };
 
-export default ImageDownloader;
+  // Return an object with all the methods
+  return {
+    ensureAssetsDirectory,
+    getClientImagesDir,
+    generateDescriptiveFilename,
+    optimizeImage,
+    downloadImage,
+    sanitizeFilename,
+    downloadAllImages,
+    updateRecordWithLocalImages,
+  };
+};
+
+// For backward compatibility, also export as default
+export default createImageDownloader;

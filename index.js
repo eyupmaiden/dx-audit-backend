@@ -1,8 +1,8 @@
 import "dotenv/config";
-import AirtableClient from "./src/airtable.js";
-import DataProcessor from "./src/dataProcessor.js";
-import ReportGenerator from "./src/reportGenerator.js";
-import ImageDownloader from "./src/imageDownloader.js";
+import { createAirtableClient } from "./src/airtable.js";
+import { createDataProcessor } from "./src/dataProcessor.js";
+import { generateReport, generateClientReportsWrapper } from "./src/reportGenerator.js";
+import { createImageDownloader } from "./src/imageDownloader.js";
 import { promises as fs } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -52,12 +52,12 @@ if (!generateAll && !recordId) {
 }
 
 // Validate recordId exists in Airtable if provided
-async function validateRecordId(recordId) {
+const validateRecordId = async (recordId) => {
   if (!recordId) return;
 
   try {
     console.log("🔍 Validating recordId in Airtable...");
-    const airtable = new AirtableClient();
+    const airtable = createAirtableClient();
     const record = await airtable.getRecordById(recordId);
 
     if (!record) {
@@ -80,10 +80,10 @@ async function validateRecordId(recordId) {
     console.error("   Please check your Airtable configuration and try again");
     process.exit(1);
   }
-}
+};
 
 // Main execution function
-async function main() {
+const main = async () => {
   // Continue with normal execution
   if (isDevMode) {
     // Dev mode logic will be handled below - just return
@@ -93,7 +93,7 @@ async function main() {
     // Production mode - just generate once
     await generateAuditReports();
   }
-}
+};
 
 // Validate recordId if we have one (either from command line or dev mode)
 if (recordId) {
@@ -116,7 +116,7 @@ const getOutputDir = () => {
 };
 
 // CSS compilation function
-async function compileCSS() {
+const compileCSS = async () => {
   try {
     console.log("🔄 Compiling SCSS to CSS...");
 
@@ -140,10 +140,10 @@ async function compileCSS() {
     console.error("❌ Error compiling CSS:", error);
     throw error;
   }
-}
+};
 
 // Asset copying function
-async function copyAssets() {
+const copyAssets = async () => {
   try {
     console.log("📁 Copying static assets...");
 
@@ -159,9 +159,9 @@ async function copyAssets() {
     console.error("❌ Error copying assets:", error);
     throw error;
   }
-}
+};
 
-async function copyAssetsToClientFolders(outputDir, srcDir) {
+const copyAssetsToClientFolders = async (outputDir, srcDir) => {
   try {
     // Get all client folders
     const items = await fs.readdir(outputDir);
@@ -229,9 +229,9 @@ async function copyAssetsToClientFolders(outputDir, srcDir) {
   } catch (error) {
     console.error("❌ Error copying assets to client folders:", error);
   }
-}
+};
 
-async function copyDirectory(src, dest) {
+const copyDirectory = async (src, dest) => {
   // Create destination directory
   await fs.mkdir(dest, { recursive: true });
 
@@ -250,9 +250,9 @@ async function copyDirectory(src, dest) {
       await fs.copyFile(srcPath, destPath);
     }
   }
-}
+};
 
-async function generateSingleReport(recordId) {
+const generateSingleReport = async (recordId) => {
   try {
     console.log(`🚀 Starting single report generation for record: ${recordId}...`);
 
@@ -288,7 +288,7 @@ async function generateSingleReport(recordId) {
 
     // Process the data
     console.log("⚙️  Processing audit data...");
-    const processor = new DataProcessor(dataWithLocalImages);
+    const processor = createDataProcessor(dataWithLocalImages);
     const summaryStats = processor.getSummaryStats();
 
     if (summaryStats.clients.length === 0) {
@@ -311,8 +311,7 @@ async function generateSingleReport(recordId) {
     console.log("\n📁 Copying assets to client folder...");
     await copyAssets();
 
-    const reportGenerator = new ReportGenerator(processor);
-    await reportGenerator.generateReport(outputPath);
+    await generateReport(processor, outputPath);
 
     console.log(`\n✅ Report generated successfully!`);
     console.log(`📁 Report saved to: ${outputPath}`);
@@ -322,9 +321,9 @@ async function generateSingleReport(recordId) {
     console.error("❌ Single report generation failed:", error.message);
     throw error;
   }
-}
+};
 
-async function generateAllReports() {
+const generateAllReports = async () => {
   try {
     console.log("🚀 Starting audit report generation for all records...");
     if (isDevMode) {
@@ -340,7 +339,7 @@ async function generateAllReports() {
 
     // Process the data
     console.log("⚙️  Processing audit data...");
-    const processor = new DataProcessor(dataWithLocalImages);
+    const processor = createDataProcessor(dataWithLocalImages);
     const summaryStats = processor.getSummaryStats();
 
     console.log(`\n📋 Found audits for ${summaryStats.clients.length} client(s):`);
@@ -355,8 +354,7 @@ async function generateAllReports() {
       const clientOutputDir = path.join(outputDir, clientFolder);
       const outputPath = path.join(clientOutputDir, "index.html");
 
-      const reportGenerator = new ReportGenerator(processor);
-      await reportGenerator.generateReport(outputPath);
+      await generateReport(processor, outputPath);
 
       console.log(`\n✅ Report generated successfully!`);
       console.log(`📁 Report saved to: ${outputPath}`);
@@ -372,8 +370,8 @@ async function generateAllReports() {
           const recordClient = record.fields?.Client || record.Client;
           return recordClient === client;
         });
-        const clientProcessor = new DataProcessor(clientData);
-        const clientReportGenerator = new ReportGenerator(clientProcessor);
+        const clientProcessor = createDataProcessor(clientData);
+        // Use the generateReport function directly
 
         // Generate client folder and index.html
         const clientFolder = client.toLowerCase().replace(/[^a-z0-9]/g, "-");
@@ -381,7 +379,7 @@ async function generateAllReports() {
         const clientOutputDir = path.join(outputDir, clientFolder);
         const outputPath = path.join(clientOutputDir, "index.html");
 
-        await clientReportGenerator.generateReport(outputPath);
+        await generateReport(clientProcessor, outputPath);
         console.log(`   ✅ ${client} report saved to: ${outputPath}`);
       }
 
@@ -400,9 +398,9 @@ async function generateAllReports() {
     console.error("❌ Report generation failed:", error.message);
     throw error;
   }
-}
+};
 
-async function generateAuditReports() {
+const generateAuditReports = async () => {
   try {
     if (recordId) {
       await generateSingleReport(recordId);
@@ -417,12 +415,12 @@ async function generateAuditReports() {
     console.error("❌ Report generation failed:", error.message);
     process.exit(1);
   }
-}
+};
 
-async function fetchAndProcessSingleRecord(recordId) {
+const fetchAndProcessSingleRecord = async (recordId) => {
   // Fetch single record from Airtable
   console.log("📊 Fetching record from Airtable...");
-  const airtable = new AirtableClient();
+  const airtable = createAirtableClient();
   const record = await airtable.getRecordById(recordId);
 
   if (!record) {
@@ -434,30 +432,30 @@ async function fetchAndProcessSingleRecord(recordId) {
   // Download images for this record
   console.log("🖼️  Downloading images...");
   const outputDir = getOutputDir();
-  const imageDownloader = new ImageDownloader(outputDir);
+  const imageDownloader = createImageDownloader(outputDir);
   const downloadedImages = await imageDownloader.downloadAllImages(cleanData);
 
   // Update data with local image paths
   return imageDownloader.updateRecordWithLocalImages(cleanData, downloadedImages);
-}
+};
 
-async function fetchAndProcessData() {
+const fetchAndProcessData = async () => {
   // Fetch data from Airtable
   console.log("📊 Fetching data from Airtable...");
-  const airtable = new AirtableClient();
+  const airtable = createAirtableClient();
   const records = await airtable.getAllRecords();
   const cleanData = airtable.extractFieldData(records);
 
   // Download images for each client
   console.log("🖼️  Downloading images...");
   const outputDir = getOutputDir();
-  const imageDownloader = new ImageDownloader(outputDir);
+  const imageDownloader = createImageDownloader(outputDir);
 
   const downloadedImages = await imageDownloader.downloadAllImages(cleanData);
 
   // Update data with local image paths
   return imageDownloader.updateRecordWithLocalImages(cleanData, downloadedImages);
-}
+};
 
 // Dev mode with file watching
 if (isDevMode) {
@@ -649,6 +647,8 @@ if (isDevMode) {
     "src/assets/styles/**/*",
     "src/assets/styles/_*.scss", // Explicitly include partial files
     "src/templates/*.html", // Explicitly include HTML files
+    "src/components/**/*", // Watch component files
+    "src/generators/**/*", // Watch generator files
   ];
 
   const watcher = chokidar.watch(watchPaths, {
