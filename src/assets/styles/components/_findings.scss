@@ -1,0 +1,229 @@
+@use "../variables" as *;
+
+// =============================================================================
+// FINDINGS COMPONENT
+// =============================================================================
+
+// Summary Grid
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $spacing-lg;
+  margin-bottom: $spacing-xxl;
+  @include fadeInUp(0.2s);
+}
+
+.summary-card {
+  padding: $spacing-xl;
+  text-align: center;
+  @include fadeInUp(0.4s);
+  @include card-base;
+  @include card-hover;
+
+  &:nth-child(1) {
+    @include animation-delay(0.2s);
+  }
+  &:nth-child(2) {
+    @include animation-delay(0.4s);
+  }
+  &:nth-child(3) {
+    @include animation-delay(0.6s);
+  }
+
+  .value {
+    font-size: 2.5rem;
+    font-weight: $font-semibold;
+    color: $color-indigo;
+    margin-bottom: $spacing-sm;
+    transition: color 0.3s ease;
+
+    &:hover {
+      animation: pulse 0.6s ease-in-out;
+    }
+  }
+
+  h3 {
+    color: $secondary-color;
+    font-size: 0.9rem;
+    font-weight: $font-semibold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: $spacing-md;
+  }
+
+  .label {
+    color: $secondary-color;
+    font-size: 0.9rem;
+    font-weight: $font-normal;
+  }
+}
+
+.findings-section {
+  margin-bottom: $spacing-xxl;
+}
+
+.client-findings {
+  margin-bottom: $spacing-xxl;
+}
+
+.client-title {
+  font-size: 1.5rem;
+  font-weight: $font-semibold;
+  color: $color-indigo;
+  margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-sm;
+  border-bottom: 2px solid $border-color;
+}
+
+.findings-subsection {
+  margin-bottom: 2.5rem;
+}
+
+.subsection-title {
+  font-size: 1.3rem;
+  font-weight: $font-semibold;
+  margin-bottom: $spacing-lg;
+  padding: $spacing-md $spacing-lg;
+  border-radius: $border-radius-sm;
+  text-align: center;
+
+  span {
+    @include flex-center;
+    gap: 8px;
+
+    &::before {
+      content: "";
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      width: 25px;
+      height: 25px;
+      filter: brightness(0) invert(1);
+      display: inline-block;
+    }
+  }
+
+  &.needs-work {
+    background: $error-color;
+    color: #fff;
+
+    span {
+      &::before {
+        background-image: url("https://dx.journeyfurther.com/audit/static/cross-squiggle.png");
+      }
+    }
+  }
+
+  &.doing-well {
+    background: $success-color;
+    color: #fff;
+
+    span {
+      &::before {
+        background-image: url("https://dx.journeyfurther.com/audit/static/tick-squiggle.png");
+      }
+    }
+  }
+}
+
+.category-findings {
+  margin-bottom: $spacing-xl;
+  padding: $spacing-lg;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  @include card-base;
+
+  &.needs-work-item {
+    border-left: 4px solid $error-color;
+
+    &.score-3 {
+      border-left: 4px solid $warn-color;
+    }
+  }
+
+  &.doing-well-item {
+    border-left: 4px solid $success-color;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba($primary-color, 0.08);
+  }
+}
+
+.category-header {
+  @include flex-between;
+  margin-bottom: $spacing-md;
+}
+
+.category-name {
+  font-size: 1.2rem;
+  font-weight: $font-semibold;
+  color: $color-indigo;
+}
+
+.category-score {
+  background: $color-indigo;
+  color: white;
+  padding: $spacing-xs 0.8rem;
+  border-radius: 20px;
+  font-weight: $font-semibold;
+  margin-left: auto;
+}
+
+.finding-item {
+  margin-bottom: $spacing-md;
+}
+
+.finding-label {
+  font-weight: $font-semibold;
+  color: $color-indigo;
+  margin-bottom: $spacing-xs;
+}
+
+.finding-text {
+  color: $color-purple;
+  padding-left: $spacing-md;
+  border-left: 2px solid $border-color;
+  line-height: 1.2;
+}
+
+// Score indicators
+.score-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: $spacing-sm;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.5);
+    box-shadow: 0 0 10px rgba($primary-color, 0.3);
+  }
+
+  &.score-1,
+  &.score-2 {
+    background-color: $error-color;
+
+    &:hover {
+      box-shadow: 0 0 15px rgba($error-color, 0.5);
+    }
+  }
+
+  &.score-3 {
+    background-color: $warn-color;
+
+    &:hover {
+      box-shadow: 0 0 15px rgba($warn-color, 0.7);
+    }
+  }
+
+  &.score-4,
+  &.score-5 {
+    background-color: $success-color;
+
+    &:hover {
+      box-shadow: 0 0 15px rgba($success-color, 0.5);
+    }
+  }
+}

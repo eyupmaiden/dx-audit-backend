@@ -8,7 +8,7 @@ import { generateEyequantHtml } from "../components/EyequantComponent.js";
 import { generateFindingsHtml } from "../components/FindingsComponent.js";
 import { generateCtaHtml } from "../components/CtaComponent.js";
 import { generateChartScripts } from "./ChartGenerator.js";
-import { replacePlaceholders } from "./TemplateProcessor.js";
+import { buildModularTemplate } from "./TemplateProcessor.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,25 +16,20 @@ const __dirname = path.dirname(__filename);
 export const generateHtmlReport = async (dataProcessor, outputPath = "./output/audit-report.html") => {
   console.log("generateReport method called with outputPath:", outputPath);
   try {
-    // Read the HTML template
-    const templatePath = path.join(__dirname, "..", "templates", "report.html");
-    let htmlTemplate = await fs.readFile(templatePath, "utf8");
-
     // Get processed data
     const reportDetails = dataProcessor.getReportDetails();
     const summaryStats = dataProcessor.getSummaryStats();
 
-    // Replace basic template placeholders
-    htmlTemplate = replacePlaceholders(htmlTemplate, reportDetails, summaryStats);
+    // Generate component content
+    const componentContent = {
+      userJourney: generateJourneyHtml(dataProcessor),
+      eyequant: generateEyequantHtml(dataProcessor),
+      findings: generateFindingsHtml(dataProcessor),
+      chartScripts: generateChartScripts(dataProcessor),
+    };
 
-    // Generate component content and replace placeholders
-    htmlTemplate = htmlTemplate.replace("{{USER_JOURNEY_CONTENT}}", generateJourneyHtml(dataProcessor));
-    htmlTemplate = htmlTemplate.replace("{{EYEQUANT_CONTENT}}", generateEyequantHtml(dataProcessor));
-    htmlTemplate = htmlTemplate.replace("{{DETAILED_FINDINGS}}", generateFindingsHtml(dataProcessor));
-
-    // Generate chart scripts
-    const chartScripts = generateChartScripts(dataProcessor);
-    htmlTemplate = htmlTemplate.replace("{{CHART_SCRIPTS}}", chartScripts);
+    // Build the complete template using modular sections
+    const htmlTemplate = await buildModularTemplate(reportDetails, summaryStats, componentContent);
 
     // Ensure output directory exists
     const outputDir = path.dirname(outputPath);

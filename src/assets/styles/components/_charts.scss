@@ -1,0 +1,58 @@
+@use "../variables" as *;
+
+// =============================================================================
+// CHARTS COMPONENT
+// =============================================================================
+
+.charts-section {
+  margin-bottom: $spacing-xxl;
+  @include fadeInUp(0.8s);
+}
+
+.chart-container {
+  padding: $spacing-xxl $spacing-xl;
+  margin-bottom: $spacing-xl;
+  @include flex-center;
+  @include fadeInUp(0.6s);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  @include card-base;
+
+  @include mobile {
+    padding: $spacing-md;
+    overflow-x: auto;
+    overflow-y: hidden;
+    justify-content: flex-start;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba($primary-color, 0.1);
+  }
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 400px;
+  margin-top: $spacing-md;
+  opacity: 0;
+  animation: fadeIn 1s ease-out 0.5s forwards;
+
+  @include mobile {
+    min-width: 600px;
+    height: 350px;
+  }
+}
+
+.radar-wrapper {
+  width: 100%;
+  max-width: 900px;
+
+  @include mobile {
+    min-width: 500px;
+  }
+}
+
+.section-title {
+  @include section-title;
+  @include slideIn(0.8s);
+}

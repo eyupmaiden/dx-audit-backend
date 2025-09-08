@@ -1,0 +1,35 @@
+<!-- Charts Section -->
+<div class="charts-section">
+  <h2 class="section-title">Performance Overview</h2>
+  <p class="journey-subtitle">
+    We've conducted an analysis of your site across several keys themes, scoring each from 1 to 5. Lower scoring areas
+    should be prioritized for further research and experimentation, with some examples provided below.
+  </p>
+
+  <!-- Summary Cards -->
+  <div class="summary-grid">
+    <div class="summary-card">
+      <h3>Overall Score</h3>
+      <div class="value">{{OVERALL_AVERAGE}}</div>
+      <div class="label">out of 5</div>
+    </div>
+    <div class="summary-card">
+      <h3>Highest Performing</h3>
+      <div class="value">{{HIGHEST_CATEGORY_SCORE}}</div>
+      <div class="label">{{HIGHEST_CATEGORY_NAME}}</div>
+    </div>
+    <div class="summary-card">
+      <h3>Needs Attention</h3>
+      <div class="value">{{LOWEST_CATEGORY_SCORE}}</div>
+      <div class="label">{{LOWEST_CATEGORY_NAME}}</div>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <div class="chart-wrapper radar-wrapper">
+      <canvas id="radarChart"></canvas>
+    </div>
+  </div>
+
+  {{DETAILED_FINDINGS}}
+</div>

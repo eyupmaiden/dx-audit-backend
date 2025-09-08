@@ -1,0 +1,211 @@
+@use "sass:math";
+@use "_variables" as *;
+
+// Grid System Variables
+$grid-columns: 12;
+$grid-gutter-width: $spacing-lg;
+$grid-gutter-width-sm: $spacing-md;
+$grid-gutter-width-xs: $spacing-sm;
+
+// Container classes
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: $spacing-xl;
+  padding-right: $spacing-xl;
+
+  @include mobile {
+    padding-left: $spacing-md;
+    padding-right: $spacing-md;
+  }
+
+  &.full {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  &.fluid {
+    max-width: 100%;
+    padding-left: $spacing-xl;
+    padding-right: $spacing-xl;
+
+    @include mobile {
+      padding-left: $spacing-md;
+      padding-right: $spacing-md;
+    }
+  }
+}
+
+// Row class
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 math.div(-$grid-gutter-width, 2);
+
+  @include mobile {
+    margin: 0 math.div(-$grid-gutter-width-sm, 2);
+  }
+
+  @include xs {
+    margin: 0 math.div(-$grid-gutter-width-xs, 2);
+  }
+}
+
+// Column base styles
+[class*="col-"] {
+  position: relative;
+  width: 100%;
+  padding: 0 math.div($grid-gutter-width, 2);
+  flex: 0 0 auto;
+
+  @include mobile {
+    padding: 0 math.div($grid-gutter-width-sm, 2);
+  }
+
+  @include xs {
+    padding: 0 math.div($grid-gutter-width-xs, 2);
+  }
+}
+
+// Generate column classes for all breakpoints
+@for $i from 1 through $grid-columns {
+  // Base column classes apply to mobile and up (no media query)
+  .col-#{$i} {
+    flex: 0 0 math.percentage(math.div($i, $grid-columns));
+    max-width: math.percentage(math.div($i, $grid-columns));
+  }
+
+  // Small breakpoint and up
+  .col-sm-#{$i} {
+    @include sm {
+      flex: 0 0 math.percentage(math.div($i, $grid-columns)) !important;
+      max-width: math.percentage(math.div($i, $grid-columns)) !important;
+    }
+  }
+
+  // Medium breakpoint and up
+  .col-md-#{$i} {
+    @include md {
+      flex: 0 0 math.percentage(math.div($i, $grid-columns)) !important;
+      max-width: math.percentage(math.div($i, $grid-columns)) !important;
+    }
+  }
+
+  // Large breakpoint and up
+  .col-lg-#{$i} {
+    @include lg {
+      flex: 0 0 math.percentage(math.div($i, $grid-columns)) !important;
+      max-width: math.percentage(math.div($i, $grid-columns)) !important;
+    }
+  }
+
+  // Extra large breakpoint and up
+  .col-xl-#{$i} {
+    @include xl {
+      flex: 0 0 math.percentage(math.div($i, $grid-columns)) !important;
+      max-width: math.percentage(math.div($i, $grid-columns)) !important;
+    }
+  }
+}
+
+// Auto columns
+.col-auto {
+  flex: 0 0 auto;
+  width: auto;
+  max-width: none;
+}
+
+.col-sm-auto {
+  @include sm {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+}
+
+.col-md-auto {
+  @include md {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+}
+
+.col-lg-auto {
+  @include lg {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+}
+
+.col-xl-auto {
+  @include xl {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+}
+
+// Offset classes
+@for $i from 0 through ($grid-columns - 1) {
+  .offset-#{$i} {
+    margin-left: math.percentage(math.div($i, $grid-columns));
+  }
+
+  .offset-sm-#{$i} {
+    @include sm {
+      margin-left: math.percentage(math.div($i, $grid-columns)) !important;
+    }
+  }
+
+  .offset-md-#{$i} {
+    @include md {
+      margin-left: math.percentage(math.div($i, $grid-columns)) !important;
+    }
+  }
+
+  .offset-lg-#{$i} {
+    @include lg {
+      margin-left: math.percentage(math.div($i, $grid-columns)) !important;
+    }
+  }
+
+  .offset-xl-#{$i} {
+    @include xl {
+      margin-left: math.percentage(math.div($i, $grid-columns)) !important;
+    }
+  }
+}
+
+// Order classes
+@for $i from 1 through $grid-columns {
+  .order-#{$i} {
+    order: $i;
+  }
+
+  .order-sm-#{$i} {
+    @include sm {
+      order: $i;
+    }
+  }
+
+  .order-md-#{$i} {
+    @include md {
+      order: $i;
+    }
+  }
+
+  .order-lg-#{$i} {
+    @include lg {
+      order: $i;
+    }
+  }
+
+  .order-xl-#{$i} {
+    @include xl {
+      order: $i;
+    }
+  }
+}

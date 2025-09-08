@@ -94,6 +94,11 @@ export const createImageDownloader = (outputDir) => {
     }
   };
 
+  const sanitizeFilename = (filename) => {
+    // Remove or replace invalid characters
+    return filename.replace(/[<>:"/\\|?*]/g, "_");
+  };
+
   const downloadImage = async (imageUrl, filename, fieldName = "", client = "", index = 0) => {
     try {
       console.log(`📥 Downloading image: ${filename}`);
@@ -107,16 +112,16 @@ export const createImageDownloader = (outputDir) => {
       const imageBuffer = Buffer.from(response.data);
 
       // Generate descriptive filename
-      const descriptiveFilename = this.generateDescriptiveFilename(filename, client, fieldName, index);
+      const descriptiveFilename = generateDescriptiveFilename(filename, client, fieldName, index);
 
       // Determine image type based on field name
       const imageType = getImageTypeFromField(fieldName);
 
       // Optimize the image
-      const optimizedBuffer = await this.optimizeImage(imageBuffer, descriptiveFilename, imageType);
+      const optimizedBuffer = await optimizeImage(imageBuffer, descriptiveFilename, imageType);
 
       // Save only to client-specific folder
-      const clientImagesDir = this.getClientImagesDir(client);
+      const clientImagesDir = getClientImagesDir(client);
       await fs.mkdir(clientImagesDir, { recursive: true });
       const clientOutputPath = path.join(clientImagesDir, descriptiveFilename);
       await fs.writeFile(clientOutputPath, optimizedBuffer);
@@ -135,11 +140,6 @@ export const createImageDownloader = (outputDir) => {
       console.error(`❌ Failed to download ${filename}:`, error.message);
       return null;
     }
-  };
-
-  const sanitizeFilename = (filename) => {
-    // Remove or replace invalid characters
-    return filename.replace(/[<>:"/\\|?*]/g, "_");
   };
 
   const downloadAllImages = async (records) => {
@@ -183,9 +183,9 @@ export const createImageDownloader = (outputDir) => {
           const imageUrl = imageUrls[i];
           if (!imageUrl) continue;
 
-          const originalFilename = this.sanitizeFilename(imageUrl.split("/").pop() || `image-${i}.png`);
+          const originalFilename = sanitizeFilename(imageUrl.split("/").pop() || `image-${i}.png`);
 
-          const result = await this.downloadImage(imageUrl, originalFilename, fieldName, client, i);
+          const result = await downloadImage(imageUrl, originalFilename, fieldName, client, i);
 
           if (result) {
             downloadedImages.push(result);

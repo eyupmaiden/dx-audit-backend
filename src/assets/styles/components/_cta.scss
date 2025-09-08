@@ -1,0 +1,109 @@
+@use "../variables" as *;
+
+// =============================================================================
+// CTA COMPONENT
+// =============================================================================
+
+.cta-section {
+  margin: $spacing-xxl 0 0 0;
+  @include fadeInUp(0.8s);
+  background: $color-indigo;
+  color: white;
+  padding: 6rem $spacing-xl !important;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: url("https://dx.journeyfurther.com/audit/static/footer-bg.jpg");
+    background-size: cover;
+    background-position: center;
+    content: "";
+    opacity: 0.15;
+  }
+
+  .cta-title {
+    font-size: 3rem;
+    font-weight: $font-semibold;
+    margin-bottom: $spacing-xl;
+    max-width: 600px;
+    position: relative;
+    z-index: 1;
+
+    @include mobile {
+      font-size: 2.4rem;
+    }
+  }
+
+  .cta-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: $spacing-xl;
+    opacity: 0.9;
+    max-width: 600px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-benefits {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $spacing-lg;
+    margin-bottom: 2.5rem;
+    position: relative;
+    z-index: 1;
+    display: none;
+
+    .benefit-item {
+      @include flex-center;
+      background: rgba(255, 255, 255, 0.1);
+      padding: $spacing-md;
+      border-radius: $border-radius-sm;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .benefit-text {
+        font-weight: 500;
+      }
+    }
+  }
+
+  .cta-button {
+    position: relative;
+    z-index: 1;
+    margin-bottom: $spacing-lg;
+    white-space: nowrap;
+    @include button-primary;
+  }
+
+  .cta-contact {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    position: relative;
+    z-index: 1;
+  }
+
+  .email-link {
+    color: $accent-color;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #ffff33;
+      text-decoration: underline;
+    }
+  }
+
+  @include mobile {
+    padding: 3rem $spacing-xl !important;
+  }
+}

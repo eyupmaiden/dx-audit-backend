@@ -1,0 +1,54 @@
+@use "../variables" as *;
+
+// =============================================================================
+// FOOTER COMPONENT
+// =============================================================================
+
+footer {
+  background: $color-indigo;
+  color: #fff;
+
+  .container {
+    @include flex-between;
+
+    @include mobile {
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    img {
+      width: 100%;
+      max-width: 150px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 12px;
+
+      a {
+        color: #fff;
+        background: $color-purple;
+        width: 46px;
+        height: 46px;
+        border-radius: 100px;
+        @include flex-center;
+        transition: all 0.2s ease-in-out;
+
+        svg {
+          fill: #fff;
+          width: 14px;
+          height: 14px;
+          transition: all 0.2s ease-in-out;
+        }
+
+        &:hover {
+          background: $color-yellow;
+
+          svg {
+            fill: $color-indigo;
+          }
+        }
+      }
+    }
+  }
+}

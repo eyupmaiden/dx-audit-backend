@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Digital Experience Audit Report - {{CLIENT_NAME}}</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <link rel="stylesheet" href="assets/styles/report.css?v={{ASSET_VERSION}}" />
+    <link rel="icon" href="https://dx.journeyfurther.com/audit/static/cropped-favicon-512-v2-32x32.png" sizes="32x32" />
+    <link
+      rel="icon"
+      href="https://dx.journeyfurther.com/audit/static/cropped-favicon-512-v2-192x192.png"
+      sizes="192x192" />
+    <link rel="apple-touch-icon" href="https://dx.journeyfurther.com/audit/static/cropped-favicon-512-v2-180x180.png" />
+    <meta
+      name="msapplication-TileImage"
+      content="https://dx.journeyfurther.com/audit/static/cropped-favicon-512-v2-270x270.png" />
+  </head>
+  <body>
+    {{HEADER_SECTION}} {{INTRO_SECTION}}
+
+    <div class="container">
+      {{SUMMARY_SECTION}} {{JOURNEY_SECTION}} {{EYEQUANT_SECTION}} {{CHARTS_SECTION}} {{FINDINGS_SECTION}}
+    </div>
+
+    {{CTA_SECTION}} {{FOOTER_SECTION}} {{CHART_SCRIPTS}}
+  </body>
+</html>

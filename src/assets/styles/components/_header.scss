@@ -1,0 +1,145 @@
+@use "../variables" as *;
+
+// =============================================================================
+// HEADER COMPONENT
+// =============================================================================
+
+.header {
+  background-color: $color-indigo;
+  background-size: 500px;
+  color: white;
+  text-align: left;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+
+  &::after {
+    display: block;
+    background-image: url("https://dx.journeyfurther.com/audit/static/header-ribbon.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    content: "";
+    width: 500px;
+    min-width: 500px;
+    height: 0;
+    padding-bottom: 100%;
+    top: 0;
+    right: 0;
+    position: absolute;
+    z-index: 0;
+  }
+
+  * {
+    z-index: 1;
+  }
+
+  svg {
+    opacity: 0.5;
+    transform: translateX(-20%);
+  }
+
+  h1 {
+    font-size: 48px;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: $spacing-md;
+    @include slideIn(0.2s);
+    max-width: 600px;
+    text-shadow: 3px 3px 35px #2b0473;
+
+    @include mobile {
+      font-size: 2.8rem;
+    }
+  }
+
+  h2 {
+    font-size: 64px;
+    font-weight: 500;
+    line-height: 1.4;
+    opacity: 0.9;
+    padding: $spacing-lg 0;
+
+    @include slideIn(0.4s);
+
+    &.uppercase {
+      text-transform: uppercase;
+
+      span {
+        padding: 0 12px;
+      }
+    }
+  }
+
+  .user--details {
+    margin-top: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    span[class*="icon--"] {
+      width: 48px;
+      height: 48px;
+      border: 3px solid #fff;
+      border-radius: 50px;
+      background-color: #dedede;
+      display: block;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      position: relative;
+
+      @include slideIn(0.2s);
+
+      &.icon--usrGBoTuHk86BXqll {
+        background-image: url("https://dx.journeyfurther.com/audit/static/users/sam.jpg");
+      }
+      &.icon--usrdMSNYJXyWsN3vt {
+        background-image: url("https://dx.journeyfurther.com/audit/static/users/magnolia.jpg");
+      }
+      &.icon--usrijZ3MurDBxkkAo {
+        background-image: url("https://dx.journeyfurther.com/audit/static/users/lorna.jpg");
+      }
+      &.icon--usrSeJRilPysdhKIZ {
+        background-image: url("https://dx.journeyfurther.com/audit/static/users/katie.jpg");
+      }
+      &.icon--usr66d3ZNGemhcGVv {
+        background-image: url("https://dx.journeyfurther.com/audit/static/users/martyn.jpg");
+      }
+      &.icon--usrm6HcNpQik5YsUa {
+        background-image: url("https://dx.journeyfurther.com/audit/static/users/jon.jpg");
+      }
+      &.icon--usravIwKidzZoFqy8 {
+        background-image: url("https://dx.journeyfurther.com/audit/static/users/dami.jpg");
+      }
+    }
+
+    p {
+      font-style: italic;
+      font-weight: 300;
+
+      // span.subtext {
+      //   font-size: 10px;
+      //   text-transform: uppercase;
+      //   letter-spacing: 1px;
+      //   display: block;
+      //   line-height: 1.2;
+      // }
+      span.report--user {
+        display: block;
+        padding-bottom: 6px;
+      }
+      span.report--date {
+        display: block;
+        font-size: 14px;
+      }
+
+      strong {
+        font-weight: 500;
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+@use "../variables" as *;
+
+// =============================================================================
+// SUMMARY COMPONENT
+// =============================================================================
+
+.container.intro {
+  background: $background-light;
+  @include fadeInUp(0.2s);
+
+  h2 {
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.6;
+
+    @include mobile {
+      font-size: 18px;
+    }
+  }
+}
