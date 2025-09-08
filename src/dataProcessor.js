@@ -347,12 +347,10 @@ export const createDataProcessor = (rawData) => {
       return {
         client: clientName,
         id: record.fields?.ID || record.ID || record.id,
-        screenshot:
-          parseScreenshots(record.fields?.["Eyequant Screenshot"] || record["Eyequant Screenshot"])[0] || null,
-        competitorScreenshot:
-          parseScreenshots(
-            record.fields?.["Competitor Eyequant Screenshot"] || record["Competitor Eyequant Screenshot"]
-          )[0] || null,
+        screenshot: parseScreenshots(record.fields?.["Eyequant Screenshot"] || record["Eyequant Screenshot"]),
+        competitorScreenshot: parseScreenshots(
+          record.fields?.["Competitor Eyequant Screenshot"] || record["Competitor Eyequant Screenshot"]
+        ),
         topFeedback: parseRichText(
           record.fields?.["Top Feedback"] || record["Top Feedback"] || "No top feedback provided"
         ),

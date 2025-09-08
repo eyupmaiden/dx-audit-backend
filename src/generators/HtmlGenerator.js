@@ -3,9 +3,18 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { generateHeaderHtml } from "../components/HeaderComponent.js";
 import { generateSummaryHtml } from "../components/SummaryComponent.js";
-import { generateJourneyHtml } from "../components/JourneyComponent.js";
+import {
+  generateJourneyHtml,
+  generateDiscoveryPhaseHtml,
+  generateDecisionPhaseHtml,
+  generateConversionPhaseHtml,
+} from "../components/JourneyComponent.js";
 import { generateEyequantHtml } from "../components/EyequantComponent.js";
-import { generateFindingsHtml } from "../components/FindingsComponent.js";
+import {
+  generateFindingsHtml,
+  generateNeedsWorkFindingsHtml,
+  generateDoingWellFindingsHtml,
+} from "../components/FindingsComponent.js";
 import { generateCtaHtml } from "../components/CtaComponent.js";
 import { generateChartScripts } from "./ChartGenerator.js";
 import { buildModularTemplate } from "./TemplateProcessor.js";
@@ -23,8 +32,13 @@ export const generateHtmlReport = async (dataProcessor, outputPath = "./output/a
     // Generate component content
     const componentContent = {
       userJourney: generateJourneyHtml(dataProcessor),
+      discoveryPhase: generateDiscoveryPhaseHtml(dataProcessor),
+      decisionPhase: generateDecisionPhaseHtml(dataProcessor),
+      conversionPhase: generateConversionPhaseHtml(dataProcessor),
       eyequant: generateEyequantHtml(dataProcessor),
       findings: generateFindingsHtml(dataProcessor),
+      needsWorkFindings: generateNeedsWorkFindingsHtml(dataProcessor),
+      doingWellFindings: generateDoingWellFindingsHtml(dataProcessor),
       chartScripts: generateChartScripts(dataProcessor),
     };
 

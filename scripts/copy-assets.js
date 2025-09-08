@@ -98,6 +98,18 @@ async function copyAssetsToClientFolders(outputDir, srcDir) {
         console.log(`⚠️  Could not copy fonts to ${clientFolder}`);
       }
 
+      // Copy JavaScript files to client folder
+      const jsSrc = path.join(srcDir, "assets/js");
+      const jsDest = path.join(clientDir, "assets/js");
+
+      try {
+        await fs.access(jsSrc);
+        await copyDirectory(jsSrc, jsDest);
+        console.log(`✅ JavaScript files copied to ${clientFolder}`);
+      } catch (error) {
+        console.log(`⚠️  Could not copy JavaScript files to ${clientFolder}: ${error.message}`);
+      }
+
       // Compile CSS directly to client folder
       const cssDest = path.join(clientDir, "assets/styles");
       await fs.mkdir(cssDest, { recursive: true });

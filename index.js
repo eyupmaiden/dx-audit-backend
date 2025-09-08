@@ -208,6 +208,18 @@ const copyAssetsToClientFolders = async (outputDir, srcDir) => {
         console.log(`⚠️  Could not copy fonts to ${clientFolder}`);
       }
 
+      // Copy JavaScript files to client folder
+      const jsSrc = path.join(srcDir, "assets/js");
+      const jsDest = path.join(clientDir, "assets/js");
+
+      try {
+        await fs.access(jsSrc);
+        await copyDirectory(jsSrc, jsDest);
+        console.log(`✅ JavaScript files copied to ${clientFolder}`);
+      } catch (error) {
+        console.log(`⚠️  Could not copy JavaScript files to ${clientFolder}: ${error.message}`);
+      }
+
       // Compile CSS directly to client folder
       const cssDest = path.join(clientDir, "assets/styles");
       await fs.mkdir(cssDest, { recursive: true });
@@ -695,6 +707,7 @@ if (isDevMode) {
   }
 
   console.log("\n🔄 Live reload is active - changes to templates and styles will automatically regenerate reports");
+  console.log("🔄 Component/Generator changes will trigger a full server restart for fresh imports");
   console.log("⏹️  Press Ctrl+C to stop the dev server");
 
   // Watch for changes
@@ -702,6 +715,35 @@ if (isDevMode) {
     console.log(`\n🔄 File changed: ${filepath}`);
 
     try {
+      // For component and generator files, restart the entire process to ensure fresh imports
+      if (filepath.includes("src/components/") || filepath.includes("src/generators/")) {
+        console.log("🔄 Component/Generator file changed - restarting dev server for fresh imports...");
+        console.log("⏹️  Stopping current server...");
+
+        // Close the watcher and server
+        watcher.close();
+        server.close();
+
+        // Small delay to ensure clean shutdown
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        // Restart the process with the same arguments
+        const { spawn } = await import("child_process");
+        const args = process.argv.slice(2);
+        const child = spawn("node", ["index.js", ...args], {
+          stdio: "inherit",
+          env: { ...process.env, NODE_ENV: "development" },
+        });
+
+        child.on("error", (error) => {
+          console.error("❌ Error restarting dev server:", error);
+        });
+
+        // Exit current process
+        process.exit(0);
+        return;
+      }
+
       // If it's a SCSS file, recompile CSS first
       if (filepath.includes(".scss")) {
         console.log("🎨 Recompiling CSS...");

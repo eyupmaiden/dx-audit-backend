@@ -5,8 +5,7 @@
 // =============================================================================
 
 .cta-section {
-  margin: $spacing-xxl 0 0 0;
-  @include fadeInUp(0.8s);
+  // margin: $spacing-xxl 0 0 0;
   background: $color-indigo;
   color: white;
   padding: 6rem $spacing-xl !important;
@@ -43,7 +42,7 @@
   .cta-subtitle {
     font-size: 1.2rem;
     margin-bottom: $spacing-xl;
-    opacity: 0.9;
+    // opacity: 0.9;
     max-width: 600px;
     position: relative;
     z-index: 1;

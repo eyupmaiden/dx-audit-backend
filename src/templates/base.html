@@ -6,6 +6,7 @@
     <title>Digital Experience Audit Report - {{CLIENT_NAME}}</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <link rel="stylesheet" href="assets/styles/report.css?v={{ASSET_VERSION}}" />
+    <script src="assets/js/animations.js?v={{ASSET_VERSION}}"></script>
     <link rel="icon" href="https://dx.journeyfurther.com/audit/static/cropped-favicon-512-v2-32x32.png" sizes="32x32" />
     <link
       rel="icon"
@@ -17,12 +18,16 @@
       content="https://dx.journeyfurther.com/audit/static/cropped-favicon-512-v2-270x270.png" />
   </head>
   <body>
-    {{HEADER_SECTION}} {{INTRO_SECTION}}
-
-    <div class="container">
-      {{SUMMARY_SECTION}} {{JOURNEY_SECTION}} {{EYEQUANT_SECTION}} {{CHARTS_SECTION}} {{FINDINGS_SECTION}}
-    </div>
-
+    {{HEADER_SECTION}} {{INTRO_SECTION}} {{SUMMARY_SECTION}} {{JOURNEY_SECTION}} {{EYEQUANT_SECTION}} {{CHARTS_SECTION}}
     {{CTA_SECTION}} {{FOOTER_SECTION}} {{CHART_SCRIPTS}}
   </body>
 </html>
+
+<!-- TODO:
+
+Add in ribbon images into header/other sections?
+re-add in charts (2x)
+set up content for website score details
+sort out mobile layout/styling
+
+-->

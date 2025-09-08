@@ -5,17 +5,17 @@
 // =============================================================================
 
 .eyequant-section {
-  margin-bottom: $spacing-xxl;
+  // margin-bottom: $spacing-xxl;
 }
 
 .eyequant-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 40%;
   grid-template-rows: 1fr 1fr;
   gap: $spacing-xl;
   min-height: 500px;
   align-items: center;
-  @include section-border;
+  // @include section-border;
 
   @include mobile {
     grid-template-columns: 1fr;
@@ -23,105 +23,53 @@
     gap: $spacing-lg;
   }
 
-  .eyequant-screenshot {
-    @include flex-center;
+  .eyequant-screenshots {
+    display: flex;
+    gap: 16px;
     grid-column: 1;
     grid-row: 1 / -1;
 
-    @include mobile {
-      grid-row: 2 / span 2;
-    }
-
-    .eyequant-image {
-      max-width: 100%;
-      height: auto;
-      border-radius: $border-radius-sm;
-      border: 1px solid $border-color;
-      box-shadow: 0 4px 12px rgba($primary-color, 0.1);
-    }
-  }
-
-  // New layout for competitor comparison
-  &.eyequant-container--with-competitor {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-    gap: $spacing-lg;
-
-    @include mobile {
-      grid-template-rows: auto auto auto;
-    }
-
-    .feedback-box.full-width {
+    .eyequant-screenshot {
+      @include flex-center;
       grid-column: 1;
-      grid-row: auto;
-      width: 100%;
-      margin-bottom: $spacing-lg;
+      grid-row: 1 / -1;
 
       @include mobile {
-        margin-bottom: $spacing-md;
-      }
-    }
-
-    .eyequant-screenshots-comparison {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: $spacing-lg;
-      grid-column: 1;
-      grid-row: 2;
-
-      @include mobile {
-        grid-template-columns: 1fr;
-        gap: $spacing-md;
+        grid-row: 2 / span 2;
       }
 
-      .eyequant-screenshot {
-        grid-column: auto;
-        grid-row: auto;
-        @include flex-center;
+      .eyequant-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: $border-radius-lg;
+        overflow: hidden;
+        border: 1px solid $border-color;
+        box-shadow: 0 2px 8px rgba($primary-color, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
 
-        &.original {
-          grid-column: 1;
-        }
-
-        &.competitor {
-          grid-column: 2;
-
-          @include mobile {
-            grid-column: 1;
-            grid-row: 2;
-          }
-        }
-
-        .eyequant-image {
-          max-width: 100%;
-          height: auto;
-          border-radius: $border-radius-sm;
-          border: 1px solid $border-color;
-          box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+        &:hover {
+          transform: scale(1.05);
+          box-shadow: 0 8px 15px rgba($primary-color, 0.2);
         }
       }
-    }
-
-    // Remove arrow images from feedback titles when competitor is present
-    .feedback-title {
-      display: none;
     }
   }
 
   .feedback-box {
-    background: $background-light;
-    border: 1px solid $border-color;
-    border-radius: $border-radius-sm;
     padding: $spacing-lg;
-    border-left: 4px solid $secondary-color;
+    // background: $background-light;
+    // border: 1px solid $border-color;
+    // border-radius: $border-radius-sm;
+    // border-left: 4px solid $secondary-color;
     flex: 1;
     @include flex-column;
     justify-content: center;
-    transition: all 0.3s ease;
+    // transition: all 0.3s ease;
 
     &.top {
       grid-column: 2;
       grid-row: 1;
+      z-index: 1;
 
       @include mobile {
         grid-column: 1;
@@ -152,12 +100,13 @@
       }
     }
 
-    &:hover {
-      transform: translateX(5px);
-      background: $background-light;
-    }
+    // &:hover {
+    //   transform: translateX(5px);
+    //   background: $background-light;
+    // }
 
     .feedback-title {
+      // display: none;
       font-size: 1.1rem;
       font-weight: $font-semibold;
       color: $color-indigo;
@@ -171,7 +120,7 @@
         background-image: url("https://dx.journeyfurther.com/audit/static/top-squiggle.png");
         width: 150px;
         height: 31px;
-        filter: brightness(0) saturate(100%) invert(15%) sepia(100%) saturate(3000%) hue-rotate(250deg);
+        filter: brightness(0) saturate(100%) invert(70%) sepia(50%) saturate(200%) hue-rotate(240deg);
         transform: translateX(-100px);
 
         @include mobile {
@@ -182,10 +131,11 @@
       &.bottom {
         background-image: url("https://dx.journeyfurther.com/audit/static/bottom-squiggle.png");
         width: 150px;
-        height: 47px;
-        filter: brightness(0) saturate(100%) invert(15%) sepia(100%) saturate(3000%) hue-rotate(250deg);
+        height: 40px;
+        filter: brightness(0) saturate(100%) invert(70%) sepia(50%) saturate(200%) hue-rotate(240deg);
         transform: translateX(-100px);
         margin-top: 6px;
+        margin-bottom: 0;
 
         @include mobile {
           transform: rotate(90deg) translate(-50px, 20px);
@@ -195,7 +145,8 @@
 
     .feedback-text {
       p {
-        color: $color-purple;
+        // color: $color-purple;
+        color: #fff;
         line-height: 1.4;
         font-size: 1rem;
         padding-bottom: 10px;

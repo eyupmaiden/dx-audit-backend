@@ -41,15 +41,15 @@ $grid-gutter-width-xs: $spacing-sm;
 .row {
   display: flex;
   flex-wrap: wrap;
-  margin: 0 math.div(-$grid-gutter-width, 2);
+  // margin: 0 math.div(-$grid-gutter-width, 2);
 
-  @include mobile {
-    margin: 0 math.div(-$grid-gutter-width-sm, 2);
-  }
+  // @include mobile {
+  //   margin: 0 math.div(-$grid-gutter-width-sm, 2);
+  // }
 
-  @include xs {
-    margin: 0 math.div(-$grid-gutter-width-xs, 2);
-  }
+  // @include xs {
+  //   margin: 0 math.div(-$grid-gutter-width-xs, 2);
+  // }
 }
 
 // Column base styles

@@ -22,7 +22,7 @@ export const loadModularTemplate = async () => {
   const baseTemplate = await fs.readFile(baseTemplatePath, "utf8");
 
   // Load all section templates
-  const sections = ["header", "intro", "summary", "journey", "eyequant", "charts", "findings", "cta", "footer"];
+  const sections = ["header", "intro", "summary", "journey", "eyequant", "charts", "cta", "footer"];
 
   const sectionTemplates = {};
   for (const section of sections) {
@@ -73,6 +73,13 @@ export const buildModularTemplate = async (reportDetails, summaryStats, componen
     processedSections[sectionName] = replacePlaceholders(sectionTemplate, reportDetails, summaryStats);
   }
 
+  // Process journey section with component content placeholders
+  let journeySection = processedSections.journey;
+  journeySection = journeySection.replace("{{USER_JOURNEY_CONTENT}}", componentContent.userJourney || "");
+  journeySection = journeySection.replace("{{DISCOVERY_CONTENT}}", componentContent.discoveryPhase || "");
+  journeySection = journeySection.replace("{{DECISION_CONTENT}}", componentContent.decisionPhase || "");
+  journeySection = journeySection.replace("{{CONVERSION_CONTENT}}", componentContent.conversionPhase || "");
+
   // Start with the base template and process its placeholders first
   let finalTemplate = replacePlaceholders(baseTemplate, reportDetails, summaryStats);
 
@@ -80,17 +87,17 @@ export const buildModularTemplate = async (reportDetails, summaryStats, componen
   finalTemplate = finalTemplate.replace("{{HEADER_SECTION}}", processedSections.header);
   finalTemplate = finalTemplate.replace("{{INTRO_SECTION}}", processedSections.intro);
   finalTemplate = finalTemplate.replace("{{SUMMARY_SECTION}}", processedSections.summary);
-  finalTemplate = finalTemplate.replace("{{JOURNEY_SECTION}}", processedSections.journey);
+  finalTemplate = finalTemplate.replace("{{JOURNEY_SECTION}}", journeySection);
   finalTemplate = finalTemplate.replace("{{EYEQUANT_SECTION}}", processedSections.eyequant);
   finalTemplate = finalTemplate.replace("{{CHARTS_SECTION}}", processedSections.charts);
-  finalTemplate = finalTemplate.replace("{{FINDINGS_SECTION}}", processedSections.findings);
   finalTemplate = finalTemplate.replace("{{CTA_SECTION}}", processedSections.cta);
   finalTemplate = finalTemplate.replace("{{FOOTER_SECTION}}", processedSections.footer);
 
-  // Replace component content placeholders
-  finalTemplate = finalTemplate.replace("{{USER_JOURNEY_CONTENT}}", componentContent.userJourney || "");
+  // Replace remaining component content placeholders
   finalTemplate = finalTemplate.replace("{{EYEQUANT_CONTENT}}", componentContent.eyequant || "");
   finalTemplate = finalTemplate.replace("{{DETAILED_FINDINGS}}", componentContent.findings || "");
+  finalTemplate = finalTemplate.replace("{{NEEDS_WORK_FINDINGS}}", componentContent.needsWorkFindings || "");
+  finalTemplate = finalTemplate.replace("{{DOING_WELL_FINDINGS}}", componentContent.doingWellFindings || "");
   finalTemplate = finalTemplate.replace("{{CHART_SCRIPTS}}", componentContent.chartScripts || "");
 
   return finalTemplate;

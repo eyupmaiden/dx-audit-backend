@@ -47,7 +47,6 @@
     line-height: 1.2;
     letter-spacing: -0.02em;
     margin-bottom: $spacing-md;
-    @include slideIn(0.2s);
     max-width: 600px;
     text-shadow: 3px 3px 35px #2b0473;
 
@@ -60,10 +59,8 @@
     font-size: 64px;
     font-weight: 500;
     line-height: 1.4;
-    opacity: 0.9;
+    // opacity: 0.9;
     padding: $spacing-lg 0;
-
-    @include slideIn(0.4s);
 
     &.uppercase {
       text-transform: uppercase;
@@ -91,8 +88,6 @@
       background-repeat: no-repeat;
       background-position: center;
       position: relative;
-
-      @include slideIn(0.2s);
 
       &.icon--usrGBoTuHk86BXqll {
         background-image: url("https://dx.journeyfurther.com/audit/static/users/sam.jpg");

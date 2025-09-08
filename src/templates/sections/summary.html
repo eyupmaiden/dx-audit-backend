@@ -1,0 +1,50 @@
+<section class="container summary py-6 fade-in-up fade-in-delay-200">
+  <div class="row">
+    <div class="col-12 col-lg-6">
+      <h2 class="fade-in-up fade-in-delay-200">Your Website's Score</h2>
+    </div>
+    <div class="col-12 col-lg-6 pr-0">
+      <div class="callout fade-in-up fade-in-delay-200">
+        <p class="border rounded-lg p-3">
+          Discover how our scoring system is design with user experience in mind. We prioritize clarity and simplicity,
+          ensuring that every score reflects meaningful insight into performance
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="row bg-grey rounded-lg my-4">
+    <div class="col-12 col-lg-6">
+      <div class="chart-container">
+        <div class="chart-wrapper radar-wrapper">
+          <canvas id="radarChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6"></div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="summary-grid">
+    <div class="summary-card bg-grey rounded-lg fade-in-left fade-in-delay-200">
+      <h3><span>Overall Ranking</span><i class="icon--overall-score"></i></h3>
+      <div class="summary-detail mt-5">
+        <div class="label">Average</div>
+        <div class="value"><span class="score">{{OVERALL_AVERAGE}}</span><span class="subtext">of 5</span></div>
+      </div>
+    </div>
+    <div class="summary-card bg-grey rounded-lg fade-in-left fade-in-delay-400">
+      <h3><span>Highest Performing</span><i class="icon--highest-performing"></i></h3>
+      <div class="summary-detail mt-5">
+        <div class="label">{{HIGHEST_CATEGORY_NAME}}</div>
+        <div class="value"><span class="score">{{HIGHEST_CATEGORY_SCORE}}</span><span class="subtext">of 5</span></div>
+      </div>
+    </div>
+    <div class="summary-card bg-grey rounded-lg fade-in-left fade-in-delay-600">
+      <h3><span>Needs Attention</span><i class="icon--needs-attention"></i></h3>
+      <div class="summary-detail mt-5">
+        <div class="label">{{LOWEST_CATEGORY_NAME}}</div>
+        <div class="value"><span class="score">{{LOWEST_CATEGORY_SCORE}}</span><span class="subtext">of 5</span></div>
+      </div>
+    </div>
+  </div>
+</section>

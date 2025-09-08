@@ -47,6 +47,7 @@ $color-light-turquoise: #66dee7;
 $color-white: #fff;
 $color-yellow: #fdff00;
 $color-black: #000;
+$color-grey: #eee;
 
 $colors: (
   "indigo": $color-indigo,
@@ -76,6 +77,7 @@ $colors: (
   "white": $color-white,
   "yellow": $color-yellow,
   "black": $color-black,
+  "grey": $color-grey,
 );
 
 @each $name, $color in $colors {
@@ -169,8 +171,8 @@ $spacing-xs: 0.3rem; // 4.8px
 $spacing-sm: 0.5rem; // 8px
 $spacing-md: 1rem; // 16px
 $spacing-lg: 1.5rem; // 24px
-$spacing-xl: 2rem; // 32px
-$spacing-xxl: 3rem; // 48px
+$spacing-xl: 3rem; // 32px
+$spacing-xxl: 5rem; // 48px
 
 // Spacing scale for consistent spacing
 $spacings: (
@@ -238,36 +240,8 @@ $grid-gutter-width-xs: $spacing-sm;
 // =============================================================================
 // ANIMATIONS
 // =============================================================================
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
+// Note: Old keyframe animations have been replaced with CSS transition-based animations
+// that are triggered by intersection observer. See _utilities.scss for the new animation classes.
 
 @keyframes pulse {
   0%,
@@ -283,21 +257,8 @@ $grid-gutter-width-xs: $spacing-sm;
 // MIXINS
 // =============================================================================
 
-// Animation mixins
-@mixin fadeInUp($delay: 0s) {
-  opacity: 0;
-  animation: fadeInUp 0.8s ease-out $delay forwards;
-}
-
-@mixin fadeIn($delay: 0s) {
-  opacity: 0;
-  animation: fadeIn 0.8s ease-out $delay forwards;
-}
-
-@mixin slideIn($delay: 0s) {
-  opacity: 0;
-  animation: slideIn 0.8s ease-out $delay forwards;
-}
+// Animation mixins - DEPRECATED: Use CSS classes with intersection observer instead
+// These mixins are kept for backward compatibility but should not be used in new code
 
 @mixin hover-lift {
   transition: all 0.3s ease;
@@ -362,26 +323,34 @@ $grid-gutter-width-xs: $spacing-sm;
 }
 
 @mixin section-title {
-  font-size: 2rem;
+  font-size: 48px;
   font-weight: $font-normal;
   line-height: 1.1;
   letter-spacing: -0.02em;
-  color: $color-indigo;
+  // color: $color-indigo;
   margin-bottom: $spacing-xl;
   text-align: left;
   position: relative;
   display: inline-block;
 
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: $color-pastel-purple;
-    border-radius: 2px;
+  span.subtext {
+    display: block;
+    font-size: 14px;
+    line-height: 22px;
+    font-weight: 400;
+    letter-spacing: 0.25px;
   }
+
+  // &::after {
+  //   content: "";
+  //   position: absolute;
+  //   bottom: -10px;
+  //   left: 0;
+  //   width: 100%;
+  //   height: 3px;
+  //   background: $color-pastel-purple;
+  //   border-radius: 2px;
+  // }
 }
 
 // Card mixins
@@ -451,10 +420,7 @@ $grid-gutter-width-xs: $spacing-sm;
   }
 }
 
-// Animation delay mixins
-@mixin animation-delay($delay) {
-  animation-delay: $delay;
-}
+// Animation delay mixins - DEPRECATED: Use CSS classes with intersection observer instead
 
 // Flexbox utilities mixins
 @mixin flex-center {

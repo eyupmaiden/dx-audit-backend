@@ -1,35 +1,25 @@
 <!-- Charts Section -->
-<div class="charts-section">
-  <h2 class="section-title">Performance Overview</h2>
-  <p class="journey-subtitle">
-    We've conducted an analysis of your site across several keys themes, scoring each from 1 to 5. Lower scoring areas
-    should be prioritized for further research and experimentation, with some examples provided below.
-  </p>
+<section class="container full charts-section bg-white">
+  <div class="container py-6 text-indigo">
 
-  <!-- Summary Cards -->
-  <div class="summary-grid">
-    <div class="summary-card">
-      <h3>Overall Score</h3>
-      <div class="value">{{OVERALL_AVERAGE}}</div>
-      <div class="label">out of 5</div>
+    <div class="col-12">
+      <h2 class="section-title text-indigo fade-in-up fade-in-delay-200">
+        <span class="subtext">Next steps</span>Performance overview in detail
+      </h2>
     </div>
-    <div class="summary-card">
-      <h3>Highest Performing</h3>
-      <div class="value">{{HIGHEST_CATEGORY_SCORE}}</div>
-      <div class="label">{{HIGHEST_CATEGORY_NAME}}</div>
-    </div>
-    <div class="summary-card">
-      <h3>Needs Attention</h3>
-      <div class="value">{{LOWEST_CATEGORY_SCORE}}</div>
-      <div class="label">{{LOWEST_CATEGORY_NAME}}</div>
-    </div>
-  </div>
 
-  <div class="chart-container">
+    <div class="col-12 col-lg-6">
+      <p class="journey-subtitle text-indigo py-4 mb-6 fade-in-up fade-in-delay-400">
+        We've conducted an analysis of your site across several keys themes, scoring each from 1 to 5. Lower scoring areas should be prioritized for further research and experimentation, with some examples provided below.
+      </p>
+    </div>
+
+  <!-- <div class="chart-container">
     <div class="chart-wrapper radar-wrapper">
       <canvas id="radarChart"></canvas>
     </div>
-  </div>
+  </div> -->
 
-  {{DETAILED_FINDINGS}}
-</div>
+  {{NEEDS_WORK_FINDINGS}}
+  {{DOING_WELL_FINDINGS}}
+</section>

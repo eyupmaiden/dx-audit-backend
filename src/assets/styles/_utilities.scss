@@ -1499,15 +1499,110 @@
   box-shadow: none !important;
 }
 
-// Animation utilities
+// Animation utilities - Intersection Observer based
 .fade-in {
-  @include fadeIn;
+  opacity: 0;
+  transition: opacity 0.8s ease-out;
+
+  &.loaded {
+    opacity: 1;
+  }
 }
+
 .fade-in-up {
-  @include fadeInUp;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+
+  &.loaded {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
+.fade-in-down {
+  opacity: 0;
+  transform: translateY(-30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+
+  &.loaded {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+
+  &.loaded {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fade-in-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+
+  &.loaded {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .slide-in {
-  @include slideIn;
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+
+  &.loaded {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Delay classes
+.fade-in-delay-100 {
+  transition-delay: 0.1s;
+}
+
+.fade-in-delay-200 {
+  transition-delay: 0.2s;
+}
+
+.fade-in-delay-300 {
+  transition-delay: 0.3s;
+}
+
+.fade-in-delay-400 {
+  transition-delay: 0.4s;
+}
+
+.fade-in-delay-500 {
+  transition-delay: 0.5s;
+}
+
+.fade-in-delay-600 {
+  transition-delay: 0.6s;
+}
+
+.fade-in-delay-700 {
+  transition-delay: 0.7s;
+}
+
+.fade-in-delay-800 {
+  transition-delay: 0.8s;
+}
+
+.fade-in-delay-900 {
+  transition-delay: 0.9s;
+}
+
+.fade-in-delay-1000 {
+  transition-delay: 1s;
 }
 .hover-lift {
   @include hover-lift;
