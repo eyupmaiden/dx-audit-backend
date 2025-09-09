@@ -16,6 +16,10 @@
   overflow: hidden;
   position: relative;
 
+  > .container {
+    position: relative;
+  }
+
   @include mobile {
     &::after {
       display: block;
