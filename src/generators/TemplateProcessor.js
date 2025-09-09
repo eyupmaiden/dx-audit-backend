@@ -22,7 +22,7 @@ export const loadModularTemplate = async () => {
   const baseTemplate = await fs.readFile(baseTemplatePath, "utf8");
 
   // Load all section templates
-  const sections = ["header", "intro", "summary", "journey", "eyequant", "charts", "cta", "footer"];
+  const sections = ["header", "intro", "summary", "journey", "eyequant", "performance", "cta", "footer"];
 
   const sectionTemplates = {};
   for (const section of sections) {
@@ -89,7 +89,7 @@ export const buildModularTemplate = async (reportDetails, summaryStats, componen
   finalTemplate = finalTemplate.replace("{{SUMMARY_SECTION}}", processedSections.summary);
   finalTemplate = finalTemplate.replace("{{JOURNEY_SECTION}}", journeySection);
   finalTemplate = finalTemplate.replace("{{EYEQUANT_SECTION}}", processedSections.eyequant);
-  finalTemplate = finalTemplate.replace("{{CHARTS_SECTION}}", processedSections.charts);
+  finalTemplate = finalTemplate.replace("{{PERFORMANCE_SECTION}}", processedSections.performance);
   finalTemplate = finalTemplate.replace("{{CTA_SECTION}}", processedSections.cta);
   finalTemplate = finalTemplate.replace("{{FOOTER_SECTION}}", processedSections.footer);
 

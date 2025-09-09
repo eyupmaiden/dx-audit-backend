@@ -1,50 +1,311 @@
-<section class="container summary py-6 fade-in-up fade-in-delay-200">
-  <div class="row">
-    <div class="col-12 col-lg-6">
-      <h2 class="fade-in-up fade-in-delay-200">Your Website's Score</h2>
-    </div>
-    <div class="col-12 col-lg-6 pr-0">
-      <div class="callout fade-in-up fade-in-delay-200">
-        <p class="border rounded-lg p-3">
-          Discover how our scoring system is design with user experience in mind. We prioritize clarity and simplicity,
-          ensuring that every score reflects meaningful insight into performance
-        </p>
-      </div>
-    </div>
+<section class="container summary bg-white py-5 py-lg-6">
+  <div class="col-12">
+    <h2 class="section-title fade-in-up fade-in-delay-200">
+      <span class="subtext">Evaluating performance</span>Your Website's Score
+    </h2>
   </div>
-  <div class="row bg-grey rounded-lg my-4">
-    <div class="col-12 col-lg-6">
-      <div class="chart-container">
-        <div class="chart-wrapper radar-wrapper">
-          <canvas id="radarChart"></canvas>
+
+  <div class="col-12 col-lg-6">
+    <p class="journey-subtitle py-4 mb-3 mb-lg-4 fade-in-up fade-in-delay-400">
+      Discover how our scoring system is designed with user experience in mind. We prioritize clarity and simplicity,
+      ensuring that every score reflects meaningful insight into performance
+    </p>
+
+    <button class="btn btn-show-more details-toggle-btn fade-in-up fade-in-delay-500" id="detailsToggle">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+        <!--!Font Awesome Pro v7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.-->
+        <path
+          d="M303.5 473C312.9 482.4 328.1 482.4 337.4 473L537.4 273C546.8 263.6 546.8 248.4 537.4 239.1C528 229.8 512.8 229.7 503.5 239.1L320.5 422.1L137.5 239.1C128.1 229.7 112.9 229.7 103.6 239.1C94.3 248.5 94.2 263.7 103.6 273L303.6 473z" />
+      </svg>
+      <span>Show criteria detail</span>
+    </button>
+  </div>
+
+  <div class="summary-explanations py-4" id="summaryExplanations">
+    <div class="criteria-explanation">
+      <div class="criteria-selector">
+        <div class="criteria-options">
+          <div class="criteria-option active" data-criteria="clarity">
+            <span class="criteria-name">Clarity & Purpose</span>
+          </div>
+          <div class="criteria-option" data-criteria="trust">
+            <span class="criteria-name">Trust & Credibility</span>
+          </div>
+          <div class="criteria-option" data-criteria="mobile">
+            <span class="criteria-name">Mobile Experience</span>
+          </div>
+          <div class="criteria-option" data-criteria="hierarchy">
+            <span class="criteria-name">Information Hierarchy</span>
+          </div>
+          <div class="criteria-option" data-criteria="friction">
+            <span class="criteria-name">Friction Points</span>
+          </div>
+          <div class="criteria-option" data-criteria="visual">
+            <span class="criteria-name">Visual Design</span>
+          </div>
+          <div class="criteria-option" data-criteria="performance">
+            <span class="criteria-name">Speed & Performance</span>
+          </div>
+          <div class="criteria-option" data-criteria="flow">
+            <span class="criteria-name">User Flow Logic</span>
+          </div>
+        </div>
+        <div class="criteria-divider mb-3"></div>
+        <div class="criteria-content">
+          <div class="criteria-detail active" id="clarity-content">
+            <p>
+              <span class="font-italic">Clarity & Purpose</span> ensures users can quickly understand what your site
+              offers and what they should do next.
+            </p>
+            <p>
+              We check if visitors can grasp your value proposition within 5 seconds, spot obvious main CTAs, and
+              immediately see what product or service you provide.
+            </p>
+          </div>
+          <div class="criteria-detail" id="trust-content">
+            <p>
+              <span class="font-italic">Trust & Credibility</span> builds user confidence through social proof and
+              transparent business practices.
+            </p>
+            <p>
+              We check for testimonials and reviews, visible security badges, easily accessible contact information, and
+              professional design elements that signal reliability.
+            </p>
+          </div>
+          <div class="criteria-detail" id="mobile-content">
+            <p>
+              <span class="font-italic">Mobile Experience</span> ensures your site works seamlessly on smartphones and
+              tablets.
+            </p>
+            <p>
+              We check for thumb-friendly CTAs, readable text without zooming, smooth form interactions, and responsive
+              design that adapts to different screen sizes.
+            </p>
+          </div>
+          <div class="criteria-detail" id="hierarchy-content">
+            <p>
+              <span class="font-italic">Information Hierarchy</span> organizes content so users can quickly find what
+              they need.
+            </p>
+            <p>
+              We check if key information is positioned high on the page, content is easily scannable, and there are no
+              bulky or overwhelming paragraph blocks that slow down reading.
+            </p>
+          </div>
+          <div class="criteria-detail" id="friction-content">
+            <p>
+              <span class="font-italic">Friction Points</span> identify unnecessary barriers that prevent users from
+              converting.
+            </p>
+            <p>
+              We look for unnecessary steps in the conversion process, excessive form fields, and error messages that
+              don't help users understand how to fix problems.
+            </p>
+          </div>
+          <div class="criteria-detail" id="visual-content">
+            <p>
+              <span class="font-italic">Visual Design</span> creates a professional, modern appearance that guides user
+              attention effectively.
+            </p>
+            <p>
+              We check if the design looks modern and professional, icons and symbols are easily recognizable, and
+              colors are used strategically to guide attention to key elements.
+            </p>
+          </div>
+          <div class="criteria-detail" id="performance-content">
+            <p>
+              <span class="font-italic">Speed & Performance</span> ensures your site loads quickly and feels responsive
+              to user interactions.
+            </p>
+            <p>
+              We check if the landing page loads quickly, there are appropriate loading indicators, and all interactions
+              feel snappy and responsive.
+            </p>
+          </div>
+          <div class="criteria-detail" id="flow-content">
+            <p>
+              <span class="font-italic">User Flow Logic</span> ensures the path from landing to conversion is clear and
+              matches user expectations.
+            </p>
+            <p>
+              We check if the next step is always obvious, users can easily go back or correct mistakes, and the overall
+              flow feels natural and intuitive.
+            </p>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-12 col-lg-6"></div>
   </div>
 
-  <!-- Summary Cards -->
-  <div class="summary-grid">
-    <div class="summary-card bg-grey rounded-lg fade-in-left fade-in-delay-200">
-      <h3><span>Overall Ranking</span><i class="icon--overall-score"></i></h3>
-      <div class="summary-detail mt-5">
-        <div class="label">Average</div>
-        <div class="value"><span class="score">{{OVERALL_AVERAGE}}</span><span class="subtext">of 5</span></div>
+  <div class="summary-overview my-4">
+    <!-- Summary Cards -->
+    <div class="summary-grid">
+      <div class="summary-card bg-grey rounded-lg fade-in-left fade-in-delay-100">
+        <h3><span>Overall Ranking</span><i class="icon--overall-score"></i></h3>
+        <div class="summary-detail mt-5">
+          <div class="label">Average</div>
+          <div class="value"><span class="score">{{OVERALL_AVERAGE}}</span><span class="subtext">/ 5</span></div>
+        </div>
+      </div>
+      <div class="summary-card bg-grey rounded-lg fade-in-left fade-in-delay-300">
+        <h3><span>Highest Performing</span><i class="icon--highest-performing"></i></h3>
+        <div class="summary-detail mt-5">
+          <div class="label">{{HIGHEST_CATEGORY_NAME}}</div>
+          <div class="value"><span class="score">{{HIGHEST_CATEGORY_SCORE}}</span><span class="subtext">/ 5</span></div>
+        </div>
+      </div>
+      <div class="summary-card bg-grey rounded-lg fade-in-left fade-in-delay-500">
+        <h3><span>Needs Attention</span><i class="icon--needs-attention"></i></h3>
+        <div class="summary-detail mt-5">
+          <div class="label">{{LOWEST_CATEGORY_NAME}}</div>
+          <div class="value"><span class="score">{{LOWEST_CATEGORY_SCORE}}</span><span class="subtext">/ 5</span></div>
+        </div>
       </div>
     </div>
-    <div class="summary-card bg-grey rounded-lg fade-in-left fade-in-delay-400">
-      <h3><span>Highest Performing</span><i class="icon--highest-performing"></i></h3>
-      <div class="summary-detail mt-5">
-        <div class="label">{{HIGHEST_CATEGORY_NAME}}</div>
-        <div class="value"><span class="score">{{HIGHEST_CATEGORY_SCORE}}</span><span class="subtext">of 5</span></div>
-      </div>
-    </div>
-    <div class="summary-card bg-grey rounded-lg fade-in-left fade-in-delay-600">
-      <h3><span>Needs Attention</span><i class="icon--needs-attention"></i></h3>
-      <div class="summary-detail mt-5">
-        <div class="label">{{LOWEST_CATEGORY_NAME}}</div>
-        <div class="value"><span class="score">{{LOWEST_CATEGORY_SCORE}}</span><span class="subtext">of 5</span></div>
+
+    <div class="chart-container bg-grey rounded-lg fade-in-right fade-in-delay-500">
+      <div class="chart-wrapper radar-wrapper">
+        <canvas id="radarChart"></canvas>
       </div>
     </div>
   </div>
+
+  <script>
+    /**
+     * Criteria Selection System
+     * Handles interactive criteria selection in the summary section
+     */
+
+    // Initialize the criteria selector
+    function initCriteriaSelector() {
+      const options = document.querySelectorAll(".criteria-option");
+      const content = document.querySelectorAll(".criteria-detail");
+
+      if (options.length === 0 || content.length === 0) {
+        console.warn("Criteria selector elements not found");
+        return;
+      }
+
+      bindEvents();
+      setInitialAlignment();
+    }
+
+    // Set initial alignment for the default active option
+    function setInitialAlignment() {
+      const activeOption = document.querySelector(".criteria-option.active");
+      const optionsContainer = document.querySelector(".criteria-options");
+
+      if (activeOption && optionsContainer) {
+        // Small delay to ensure layout is complete
+        setTimeout(() => {
+          scrollToOption(activeOption, optionsContainer);
+        }, 100);
+      }
+    }
+
+    // Bind click events to options
+    function bindEvents() {
+      const options = document.querySelectorAll(".criteria-option");
+      options.forEach((option) => {
+        option.addEventListener("click", (e) => {
+          const criteria = e.currentTarget.getAttribute("data-criteria");
+          selectCriteria(criteria);
+        });
+      });
+    }
+
+    // Handle criteria selection
+    function selectCriteria(criteria) {
+      // Get fresh elements from DOM
+      const options = document.querySelectorAll(".criteria-option");
+      const content = document.querySelectorAll(".criteria-detail");
+      const optionsContainer = document.querySelector(".criteria-options");
+
+      // Remove active class from all options
+      options.forEach((option) => {
+        option.classList.remove("active");
+      });
+
+      // Add active class to selected option
+      const selectedOption = document.querySelector(`[data-criteria="${criteria}"]`);
+      if (selectedOption) {
+        selectedOption.classList.add("active");
+
+        // Scroll to the selected option
+        if (optionsContainer) {
+          scrollToOption(selectedOption, optionsContainer);
+        }
+      }
+
+      // Hide all content
+      content.forEach((content) => {
+        content.classList.remove("active");
+      });
+
+      // Show selected content
+      const selectedContent = document.getElementById(`${criteria}-content`);
+      if (selectedContent) {
+        selectedContent.classList.add("active");
+      }
+    }
+
+    // Scroll to selected option with smooth behavior
+    function scrollToOption(selectedOption, optionsContainer) {
+      if (!selectedOption || !optionsContainer) return;
+
+      const containerRect = optionsContainer.getBoundingClientRect();
+      const optionRect = selectedOption.getBoundingClientRect();
+
+      // Calculate the scroll position to center the option
+      const containerCenter = containerRect.width / 2;
+      const optionCenter = optionRect.left - containerRect.left + optionRect.width / 2;
+      const scrollLeft = optionsContainer.scrollLeft + (optionCenter - containerCenter);
+
+      // Smooth scroll to the calculated position
+      optionsContainer.scrollTo({
+        left: scrollLeft,
+        behavior: "smooth",
+      });
+    }
+
+    // Initialize details toggle functionality
+    function initDetailsToggle() {
+      const toggleBtn = document.getElementById("detailsToggle");
+      const explanationsDiv = document.getElementById("summaryExplanations");
+
+      if (!toggleBtn || !explanationsDiv) {
+        console.warn("Details toggle elements not found");
+        return;
+      }
+
+      toggleBtn.addEventListener("click", () => {
+        const isHidden = !explanationsDiv.classList.contains("active");
+
+        if (isHidden) {
+          explanationsDiv.classList.add("active");
+          toggleBtn.classList.add("active");
+          toggleBtn.querySelector("span").textContent = "Hide criteria details";
+        } else {
+          explanationsDiv.classList.remove("active");
+          toggleBtn.classList.remove("active");
+          toggleBtn.querySelector("span").textContent = "Show criteria details";
+        }
+      });
+    }
+
+    // Initialize when DOM is ready
+    document.addEventListener("DOMContentLoaded", () => {
+      initCriteriaSelector();
+      initDetailsToggle();
+    });
+
+    // Make functions globally available for debugging
+    window.criteriaSelector = {
+      init: initCriteriaSelector,
+      selectCriteria,
+      scrollToOption,
+      options: () => document.querySelectorAll(".criteria-option"),
+      content: () => document.querySelectorAll(".criteria-detail"),
+    };
+  </script>
 </section>

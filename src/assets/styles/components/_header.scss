@@ -16,29 +16,39 @@
   overflow: hidden;
   position: relative;
 
-  &::after {
-    display: block;
-    background-image: url("https://dx.journeyfurther.com/audit/static/header-ribbon.png");
-    background-repeat: no-repeat;
-    background-size: 100%;
-    content: "";
-    width: 500px;
-    min-width: 500px;
-    height: 0;
-    padding-bottom: 100%;
-    top: 0;
-    right: 0;
-    position: absolute;
-    z-index: 0;
+  @include mobile {
+    &::after {
+      display: block;
+      background-image: url("https://dx.journeyfurther.com/audit/static/header-ribbon.png");
+      background-repeat: no-repeat;
+      background-size: 100%;
+      content: "";
+      width: 100%;
+      max-width: 500px;
+      height: 0;
+      padding-bottom: 100%;
+      top: 0;
+      right: 0;
+      position: absolute;
+      z-index: 0;
+    }
   }
 
   * {
     z-index: 1;
+
+    @include mobile {
+      text-shadow: 0 0 10px $color-indigo;
+    }
   }
 
   svg {
     opacity: 0.5;
     transform: translateX(-20%);
+
+    @include mobile {
+      transform: translateX(0);
+    }
   }
 
   h1 {
@@ -48,10 +58,9 @@
     letter-spacing: -0.02em;
     margin-bottom: $spacing-md;
     max-width: 600px;
-    text-shadow: 3px 3px 35px #2b0473;
 
     @include mobile {
-      font-size: 2.8rem;
+      font-size: 34px;
     }
   }
 
@@ -61,6 +70,11 @@
     line-height: 1.4;
     // opacity: 0.9;
     padding: $spacing-lg 0;
+
+    @include mobile {
+      font-size: 42px;
+      padding: $spacing-md 0;
+    }
 
     &.uppercase {
       text-transform: uppercase;
@@ -108,7 +122,7 @@
         background-image: url("https://dx.journeyfurther.com/audit/static/users/jon.jpg");
       }
       &.icon--usravIwKidzZoFqy8 {
-        background-image: url("https://dx.journeyfurther.com/audit/static/users/dami.jpg");
+        background-image: url("https://dx.journeyfurther.com/audit/static/users/damilola.jpg");
       }
     }
 
@@ -135,6 +149,17 @@
       strong {
         font-weight: 500;
       }
+    }
+  }
+
+  .ribbon {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+
+    @include mobile {
+      display: none;
     }
   }
 }

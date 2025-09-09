@@ -7,7 +7,7 @@ export const generateSummaryHtml = (dataProcessor) => {
       <div class="summary-card">
         <h3>Overall Score</h3>
         <div class="value">${overallAverage}</div>
-        <div class="label">out of 5</div>
+        <div class="label">out / 5</div>
       </div>
       <div class="summary-card">
         <h3>Highest Performing</h3>

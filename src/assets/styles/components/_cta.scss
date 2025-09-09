@@ -8,10 +8,15 @@
   // margin: $spacing-xxl 0 0 0;
   background: $color-indigo;
   color: white;
-  padding: 6rem $spacing-xl !important;
+  // padding: 6rem $spacing-xl !important;
   text-align: left;
   position: relative;
   overflow: hidden;
+
+  > .container {
+    position: relative;
+    z-index: 1;
+  }
 
   &::after {
     width: 100%;
@@ -100,9 +105,5 @@
       color: #ffff33;
       text-decoration: underline;
     }
-  }
-
-  @include mobile {
-    padding: 3rem $spacing-xl !important;
   }
 }

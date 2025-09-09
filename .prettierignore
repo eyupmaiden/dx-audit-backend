@@ -6,3 +6,5 @@ output/
 
 # Ignore node modules
 node_modules/ 
+
+# ribbon.js

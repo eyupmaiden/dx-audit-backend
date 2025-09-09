@@ -4,15 +4,11 @@
 // CHARTS COMPONENT
 // =============================================================================
 
-.charts-section {
-  // margin-bottom: $spacing-xxl;
-}
-
 .chart-container {
-  padding: $spacing-xxl $spacing-xl;
-  margin-bottom: $spacing-xl;
+  padding: $spacing-md 0;
+  // margin-bottom: $spacing-xl;
   @include flex-center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  // transition: transform 0.3s ease, box-shadow 0.3s ease;
   // @include card-base;
 
   @include mobile {
@@ -46,6 +42,26 @@
   @include mobile {
     min-width: 500px;
   }
+}
+
+// Interactive chart styles
+.chart-container {
+  canvas {
+    cursor: default;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: scale(1.02);
+    }
+  }
+}
+
+// Chart label hover effects (applied via JavaScript)
+.chart-label-hover {
+  font-weight: bold !important;
+  color: $primary-color !important;
+  text-shadow: 0 0 8px rgba($primary-color, 0.3);
+  transition: all 0.2s ease;
 }
 
 .section-title {

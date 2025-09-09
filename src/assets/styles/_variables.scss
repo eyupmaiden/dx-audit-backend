@@ -197,7 +197,7 @@ $border-radius-full: 50px;
 // BREAKPOINTS
 // =============================================================================
 
-$mobile: 768px;
+$mobile: 959px;
 
 // =============================================================================
 // Z-INDEX SCALE
@@ -332,6 +332,11 @@ $grid-gutter-width-xs: $spacing-sm;
   text-align: left;
   position: relative;
   display: inline-block;
+
+  @include mobile {
+    font-size: 38px;
+    margin-bottom: $spacing-md;
+  }
 
   span.subtext {
     display: block;

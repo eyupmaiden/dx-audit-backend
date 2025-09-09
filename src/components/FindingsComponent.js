@@ -48,7 +48,7 @@ const generateFindingsSection = (findings, className, title) => {
             </div>
             <div class="category-score"><span class="score">${
               finding.score
-            }</span><span class="subtext">of 5</span></div>
+            }</span><span class="subtext">/ 5</span></div>
           </div>
           <div class="finding-item">
             <div class="finding-label">${className === "needs-work" ? "Issue Identified:" : "What's working:"}</div>
@@ -95,7 +95,7 @@ const generateDoingWellFindingsOnly = (detailedFindings) => {
       const doingWell = audit.findings.filter((finding) => finding.score > 3).sort((a, b) => b.score - a.score); // Highest to lowest
 
       return `
-        <div class="client-findings">
+        <div class="client-findings col-12">
           ${generateFindingsSection(doingWell, "doing-well", "What you're doing well")}
         </div>
       `;

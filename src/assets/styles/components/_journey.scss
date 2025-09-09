@@ -17,6 +17,10 @@
   // // font-size: 1.1rem;
   // margin-bottom: $spacing-xl;
   // font-style: italic;
+
+  @include mobile {
+    font-size: 18px;
+  }
 }
 
 .journey-phase {
@@ -147,9 +151,17 @@
 
     .phase-screenshots {
       order: 2;
+
+      @include mobile {
+        order: 1;
+      }
     }
     .phase-content {
       order: 1;
+
+      @include mobile {
+        order: 2;
+      }
     }
   }
 

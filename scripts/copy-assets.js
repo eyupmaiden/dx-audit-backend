@@ -1,9 +1,46 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import sharp from "sharp";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Image file extensions that should be compressed
+const IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".tiff"];
+
+function isImageFile(filename) {
+  const ext = path.extname(filename).toLowerCase();
+  return IMAGE_EXTENSIONS.includes(ext);
+}
+
+async function compressImage(srcPath, destPath) {
+  try {
+    const originalSize = (await fs.stat(srcPath)).size;
+
+    await sharp(srcPath)
+      .png({ quality: 85, compressionLevel: 9 })
+      .jpeg({ quality: 85, progressive: true })
+      .webp({ quality: 85 })
+      .toFile(destPath);
+
+    const compressedSize = (await fs.stat(destPath)).size;
+    const reduction = (((originalSize - compressedSize) / originalSize) * 100).toFixed(1);
+
+    console.log(
+      `📸 Compressed ${path.basename(srcPath)}: ${(originalSize / 1024).toFixed(1)}KB → ${(
+        compressedSize / 1024
+      ).toFixed(1)}KB (${reduction}% reduction)`
+    );
+
+    return true;
+  } catch (error) {
+    console.log(`⚠️  Could not compress ${path.basename(srcPath)}: ${error.message}`);
+    // Fallback to regular copy if compression fails
+    await fs.copyFile(srcPath, destPath);
+    return false;
+  }
+}
 
 async function cleanupOldVersions(clientDir) {
   try {
@@ -160,7 +197,12 @@ async function copyDirectory(src, dest) {
     if (stat.isDirectory()) {
       await copyDirectory(srcPath, destPath);
     } else {
-      await fs.copyFile(srcPath, destPath);
+      // Check if it's an image file and compress it
+      if (isImageFile(item)) {
+        await compressImage(srcPath, destPath);
+      } else {
+        await fs.copyFile(srcPath, destPath);
+      }
     }
   }
 }
