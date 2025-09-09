@@ -126,9 +126,13 @@
     font-size: 18px;
     font-weight: 500;
 
+    @include mobile {
+      font-size: 17px;
+    }
+
     svg {
       fill: $color-indigo;
-      width: 30px;
+      width: 26px;
       transition: transform 0.2s ease-out;
     }
 
@@ -227,7 +231,7 @@
           transition: all 0.2s ease-in-out;
           transform: scale(1);
           transform-origin: bottom;
-          padding: $spacing-sm $spacing-md;
+          padding: $spacing-sm $spacing-lg $spacing-sm $spacing-sm;
           white-space: nowrap;
 
           @include mobile {
@@ -269,7 +273,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      padding: 0 $spacing-md;
+      // padding: 0 $spacing-md;
       opacity: 0;
       visibility: hidden;
       // overflow-y: auto;

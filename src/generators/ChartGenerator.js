@@ -100,7 +100,7 @@ export const generateChartScripts = (dataProcessor) => {
           }
           
           // Wait a bit for the animation to complete if we just opened it
-          const delay = isHidden ? 400 : 200;
+          const delay = isHidden ? 200 : 200;
           
           setTimeout(() => {
             // summaryExplanations.scrollIntoView({ 
@@ -114,7 +114,7 @@ export const generateChartScripts = (dataProcessor) => {
               setTimeout(() => {
                 console.log('Calling selectCriteria with:', criteria);
                 selectCriteria(criteria);
-              }, 200); // Small delay to allow scroll to complete
+              }, 0); // Small delay to allow scroll to complete
             }
           }, delay);
         } else {
