@@ -9,9 +9,10 @@
     "build:all": "node index.js --all",
     "dev": "NODE_ENV=development node index.js",
     "test-images": "node test-image-download.js",
+    "compile-css": "node scripts/compile-css.js",
+    "copy-assets": "node scripts/copy-assets.js",
+    "setup-reports-repo": "node scripts/setup-reports-repo.js",
     "image-config": "node scripts/update-image-config.js",
-    "copy-reports": "node scripts/copy-reports.js",
-    "update-reports-json": "node scripts/update-reports-json.js",
     "publish": "npm run generate && npm run update-reports-json && npm run copy-reports"
   },
   "keywords": [],
